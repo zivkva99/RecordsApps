@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.recordsapp.ui.components.CountryDropdown
 import com.recordsapp.ui.components.CoverImagePicker
 import com.recordsapp.ui.components.GradeDropdown
+import com.recordsapp.ui.components.NumRecordsDropdown
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,13 +104,10 @@ fun AddEditAlbumScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedTextField(
-                    value = state.numRecords,
-                    onValueChange = viewModel::onNumRecordsChanged,
-                    label = { Text("No. of Records") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true
+                NumRecordsDropdown(
+                    selectedValue = state.numRecords,
+                    onValueSelected = viewModel::onNumRecordsChanged,
+                    modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = state.year,
