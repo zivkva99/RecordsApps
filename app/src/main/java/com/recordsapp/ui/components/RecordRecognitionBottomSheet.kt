@@ -45,13 +45,19 @@ fun RecordRecognitionBottomSheet(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp),
+                        .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     CircularProgressIndicator()
                     Text("Identifying record…", style = MaterialTheme.typography.bodyLarge)
-                    Spacer(Modifier.height(16.dp))
+                    OutlinedButton(
+                        onClick = onReject,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Cancel")
+                    }
+                    Spacer(Modifier.height(8.dp))
                 }
             }
 

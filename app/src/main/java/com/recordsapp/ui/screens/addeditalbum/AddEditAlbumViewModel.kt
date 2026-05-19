@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -70,6 +71,8 @@ class AddEditAlbumViewModel @Inject constructor(
     private val _retakeRequested = MutableSharedFlow<Unit>()
     val retakeRequested: SharedFlow<Unit> = _retakeRequested.asSharedFlow()
 
+    private var recognitionJob: Job? = null
+
     init {
         if (albumId != null) {
             viewModelScope.launch {
@@ -115,7 +118,8 @@ class AddEditAlbumViewModel @Inject constructor(
     }
 
     private fun recognizeRecord(uri: Uri) {
-        viewModelScope.launch {
+        recognitionJob?.cancel()
+        recognitionJob = viewModelScope.launch {
             _state.update { it.copy(recognitionState = RecognitionState.Loading) }
             try {
                 val result = recognitionService.recognize(uri)
@@ -146,10 +150,12 @@ class AddEditAlbumViewModel @Inject constructor(
     }
 
     fun rejectRecognition() {
+        recognitionJob?.cancel()
         _state.update { it.copy(recognitionState = RecognitionState.Idle) }
     }
 
     fun retakePhoto() {
+        recognitionJob?.cancel()
         _state.update { it.copy(recognitionState = RecognitionState.Idle, coverImageUri = null) }
         viewModelScope.launch { _retakeRequested.emit(Unit) }
     }
