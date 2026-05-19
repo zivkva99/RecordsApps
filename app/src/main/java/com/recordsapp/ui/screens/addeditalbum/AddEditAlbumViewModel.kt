@@ -7,9 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.recordsapp.data.local.ImageStorage
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
+import com.recordsapp.data.remote.GeminiApiException
+import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
 import com.recordsapp.domain.model.Country
 import com.recordsapp.domain.model.Grade
+import com.recordsapp.domain.model.RecognitionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +23,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
+
+sealed class RecognitionState {
+    object Idle : RecognitionState()
+    object Loading : RecognitionState()
+    data class Result(val result: RecognitionResult) : RecognitionState()
+    data class Error(val message: String) : RecognitionState()
+}
 
 data class AddEditAlbumState(
     val artistName: String = "",
@@ -35,14 +47,16 @@ data class AddEditAlbumState(
     val listened: Boolean = false,
     val isEditing: Boolean = false,
     val isSaving: Boolean = false,
-    val existingCoverPath: String? = null
+    val existingCoverPath: String? = null,
+    val recognitionState: RecognitionState = RecognitionState.Idle
 )
 
 @HiltViewModel
 class AddEditAlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: AlbumRepository,
-    private val imageStorage: ImageStorage
+    private val imageStorage: ImageStorage,
+    private val recognitionService: RecognitionService
 ) : ViewModel() {
 
     private val albumId: Long? = savedStateHandle.get<Long>("albumId")
@@ -52,6 +66,9 @@ class AddEditAlbumViewModel @Inject constructor(
 
     private val _saveComplete = MutableSharedFlow<Boolean>()
     val saveComplete: SharedFlow<Boolean> = _saveComplete.asSharedFlow()
+
+    private val _retakeRequested = MutableSharedFlow<Unit>()
+    val retakeRequested: SharedFlow<Unit> = _retakeRequested.asSharedFlow()
 
     init {
         if (albumId != null) {
@@ -87,11 +104,55 @@ class AddEditAlbumViewModel @Inject constructor(
     fun onNumRecordsChanged(value: String) { _state.update { it.copy(numRecords = value) } }
     fun onYearChanged(value: String) { _state.update { it.copy(year = value) } }
     fun onCommentChanged(value: String) { _state.update { it.copy(comment = value) } }
-    fun onCoverImageChanged(uri: Uri) { _state.update { it.copy(coverImageUri = uri) } }
     fun onGradeSide1Changed(grade: Grade) { _state.update { it.copy(gradeSide1 = grade) } }
     fun onGradeSide2Changed(grade: Grade) { _state.update { it.copy(gradeSide2 = grade) } }
     fun onCountryChanged(country: Country) { _state.update { it.copy(country = country) } }
     fun onListenedChanged(value: Boolean) { _state.update { it.copy(listened = value) } }
+
+    fun onCoverImageChanged(uri: Uri) {
+        _state.update { it.copy(coverImageUri = uri) }
+        recognizeRecord(uri)
+    }
+
+    private fun recognizeRecord(uri: Uri) {
+        viewModelScope.launch {
+            _state.update { it.copy(recognitionState = RecognitionState.Loading) }
+            try {
+                val result = recognitionService.recognize(uri)
+                _state.update { it.copy(recognitionState = RecognitionState.Result(result)) }
+            } catch (e: Exception) {
+                val message = when {
+                    e is UnknownHostException -> "No internet connection. Retake or fill manually."
+                    e is GeminiApiException && e.code == 403 -> "Recognition unavailable."
+                    e is SocketTimeoutException -> "Recognition timed out."
+                    else -> "Couldn't read the result."
+                }
+                _state.update { it.copy(recognitionState = RecognitionState.Error(message)) }
+            }
+        }
+    }
+
+    fun acceptRecognition() {
+        val result = (_state.value.recognitionState as? RecognitionState.Result)?.result ?: return
+        _state.update { state ->
+            state.copy(
+                artistName = result.artistName.ifBlank { state.artistName },
+                albumName = result.albumName.ifBlank { state.albumName },
+                year = result.year.ifBlank { state.year },
+                numRecords = result.numRecords.ifBlank { state.numRecords },
+                recognitionState = RecognitionState.Idle
+            )
+        }
+    }
+
+    fun rejectRecognition() {
+        _state.update { it.copy(recognitionState = RecognitionState.Idle) }
+    }
+
+    fun retakePhoto() {
+        _state.update { it.copy(recognitionState = RecognitionState.Idle, coverImageUri = null) }
+        viewModelScope.launch { _retakeRequested.emit(Unit) }
+    }
 
     fun save() {
         val current = _state.value
