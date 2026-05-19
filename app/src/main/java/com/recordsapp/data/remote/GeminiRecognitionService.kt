@@ -58,7 +58,7 @@ class GeminiRecognitionService @Inject constructor(
 
         val response = client.newCall(request).execute()
         response.use { resp ->
-            if (!resp.isSuccessful) throw GeminiApiException(resp.code)
+            if (!resp.isSuccessful) throw RecognitionApiException(resp.code)
             val body = resp.body?.string() ?: throw IllegalStateException("Empty response")
             parseGeminiResponse(body)
         }
@@ -79,7 +79,7 @@ If a field cannot be determined, use an empty string."""
     }
 }
 
-class GeminiApiException(val code: Int) : Exception("Gemini API error: $code")
+class RecognitionApiException(val code: Int) : Exception("Recognition API error: $code")
 
 class RecognitionParseException(cause: Throwable) : Exception("Failed to parse recognition response", cause)
 

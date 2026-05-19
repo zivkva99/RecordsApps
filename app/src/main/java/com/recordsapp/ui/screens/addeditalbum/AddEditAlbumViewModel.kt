@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.recordsapp.data.local.ImageStorage
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
-import com.recordsapp.data.remote.GeminiApiException
+import com.recordsapp.data.remote.RecognitionApiException
 import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
 import com.recordsapp.domain.model.Country
@@ -123,7 +123,7 @@ class AddEditAlbumViewModel @Inject constructor(
             } catch (e: Exception) {
                 val message = when {
                     e is UnknownHostException -> "No internet connection. Retake or fill manually."
-                    e is GeminiApiException && e.code == 403 -> "Recognition unavailable."
+                    e is RecognitionApiException && e.code == 403 -> "Recognition unavailable."
                     e is SocketTimeoutException -> "Recognition timed out."
                     else -> "Couldn't read the result."
                 }
