@@ -60,7 +60,7 @@ fun AddEditAlbumScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.retakeRequested.collect {
             launchCamera = true
         }
