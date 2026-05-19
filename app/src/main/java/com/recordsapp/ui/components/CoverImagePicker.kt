@@ -1,6 +1,8 @@
 package com.recordsapp.ui.components
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import coil3.compose.AsyncImage
 import java.io.File
@@ -51,6 +54,7 @@ fun CoverImagePicker(
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
+    var pendingCameraAfterPermission by remember { mutableStateOf(false) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -64,14 +68,36 @@ fun CoverImagePicker(
         if (success) pendingCameraUri?.let { onImagePicked(it) }
     }
 
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted && pendingCameraAfterPermission) {
+            pendingCameraAfterPermission = false
+            val uri = createTempCameraUri(context)
+            pendingCameraUri = uri
+            cameraLauncher.launch(uri)
+        }
+    }
+
+    fun launchCameraWithPermission() {
+        val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+            PackageManager.PERMISSION_GRANTED
+        if (granted) {
+            val uri = createTempCameraUri(context)
+            pendingCameraUri = uri
+            cameraLauncher.launch(uri)
+        } else {
+            pendingCameraAfterPermission = true
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
     // launchCamera is a Boolean pulse: caller sets true, we launch and call onCameraLaunched()
     // so caller can reset it to false (re-arms for the next retake).
     LaunchedEffect(launchCamera) {
         if (launchCamera) {
             showDialog = false  // prevent double-launch if dialog was open simultaneously
-            val uri = createTempCameraUri(context)
-            pendingCameraUri = uri
-            cameraLauncher.launch(uri)
+            launchCameraWithPermission()
             onCameraLaunched()
         }
     }
@@ -101,9 +127,7 @@ fun CoverImagePicker(
                     TextButton(
                         onClick = {
                             showDialog = false
-                            val uri = createTempCameraUri(context)
-                            pendingCameraUri = uri
-                            cameraLauncher.launch(uri)
+                            launchCameraWithPermission()
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
