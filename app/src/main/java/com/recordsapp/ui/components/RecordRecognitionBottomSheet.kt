@@ -34,6 +34,8 @@ fun RecordRecognitionBottomSheet(
     onReject: () -> Unit,
     onRetake: () -> Unit
 ) {
+    if (recognitionState == RecognitionState.Idle) return
+
     ModalBottomSheet(
         onDismissRequest = {},
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
