@@ -60,19 +60,10 @@ fun AddEditAlbumScreen(
         }
     }
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(Unit) {
         viewModel.retakeRequested.collect {
             launchCamera = true
         }
-    }
-
-    if (state.recognitionState != RecognitionState.Idle) {
-        RecordRecognitionBottomSheet(
-            recognitionState = state.recognitionState,
-            onAccept = viewModel::acceptRecognition,
-            onReject = viewModel::rejectRecognition,
-            onRetake = viewModel::retakePhoto
-        )
     }
 
     Scaffold(
@@ -87,6 +78,15 @@ fun AddEditAlbumScreen(
             )
         }
     ) { paddingValues ->
+        if (state.recognitionState != RecognitionState.Idle) {
+            RecordRecognitionBottomSheet(
+                recognitionState = state.recognitionState,
+                onAccept = viewModel::acceptRecognition,
+                onReject = viewModel::rejectRecognition,
+                onRetake = viewModel::retakePhoto
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
