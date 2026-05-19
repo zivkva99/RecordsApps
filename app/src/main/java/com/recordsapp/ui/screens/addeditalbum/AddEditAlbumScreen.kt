@@ -78,15 +78,6 @@ fun AddEditAlbumScreen(
             )
         }
     ) { paddingValues ->
-        if (state.recognitionState != RecognitionState.Idle) {
-            RecordRecognitionBottomSheet(
-                recognitionState = state.recognitionState,
-                onAccept = viewModel::acceptRecognition,
-                onReject = viewModel::rejectRecognition,
-                onRetake = viewModel::retakePhoto
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -220,5 +211,14 @@ fun AddEditAlbumScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    if (state.recognitionState != RecognitionState.Idle) {
+        RecordRecognitionBottomSheet(
+            recognitionState = state.recognitionState,
+            onAccept = viewModel::acceptRecognition,
+            onReject = viewModel::rejectRecognition,
+            onRetake = viewModel::retakePhoto
+        )
     }
 }
