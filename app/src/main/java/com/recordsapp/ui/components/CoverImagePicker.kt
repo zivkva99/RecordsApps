@@ -25,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,8 @@ import java.io.File
 fun CoverImagePicker(
     currentImageUri: Uri?,
     onImagePicked: (Uri) -> Unit,
+    launchCamera: Boolean = false,
+    onCameraLaunched: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -59,6 +62,15 @@ fun CoverImagePicker(
         contract = ActivityResultContracts.TakePicture()
     ) { success: Boolean ->
         if (success) pendingCameraUri?.let { onImagePicked(it) }
+    }
+
+    LaunchedEffect(launchCamera) {
+        if (launchCamera) {
+            val uri = createTempCameraUri(context)
+            pendingCameraUri = uri
+            cameraLauncher.launch(uri)
+            onCameraLaunched()
+        }
     }
 
     if (showDialog) {
