@@ -64,8 +64,11 @@ fun CoverImagePicker(
         if (success) pendingCameraUri?.let { onImagePicked(it) }
     }
 
+    // launchCamera is a Boolean pulse: caller sets true, we launch and call onCameraLaunched()
+    // so caller can reset it to false (re-arms for the next retake).
     LaunchedEffect(launchCamera) {
         if (launchCamera) {
+            showDialog = false  // prevent double-launch if dialog was open simultaneously
             val uri = createTempCameraUri(context)
             pendingCameraUri = uri
             cameraLauncher.launch(uri)
