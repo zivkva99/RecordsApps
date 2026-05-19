@@ -30,6 +30,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +43,7 @@ import com.recordsapp.ui.components.CountryDropdown
 import com.recordsapp.ui.components.CoverImagePicker
 import com.recordsapp.ui.components.GradeDropdown
 import com.recordsapp.ui.components.NumRecordsDropdown
+import com.recordsapp.ui.components.RecordRecognitionBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,11 +52,27 @@ fun AddEditAlbumScreen(
     viewModel: AddEditAlbumViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var launchCamera by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.saveComplete.collect { success ->
             if (success) onNavigateBack()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.retakeRequested.collect {
+            launchCamera = true
+        }
+    }
+
+    if (state.recognitionState != RecognitionState.Idle) {
+        RecordRecognitionBottomSheet(
+            recognitionState = state.recognitionState,
+            onAccept = viewModel::acceptRecognition,
+            onReject = viewModel::rejectRecognition,
+            onRetake = viewModel::retakePhoto
+        )
     }
 
     Scaffold(
@@ -79,7 +99,9 @@ fun AddEditAlbumScreen(
             CoverImagePicker(
                 currentImageUri = state.coverImageUri
                     ?: state.existingCoverPath?.let { Uri.parse(it) },
-                onImagePicked = viewModel::onCoverImageChanged
+                onImagePicked = viewModel::onCoverImageChanged,
+                launchCamera = launchCamera,
+                onCameraLaunched = { launchCamera = false }
             )
 
             Spacer(modifier = Modifier.height(4.dp))
