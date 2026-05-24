@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.recordsapp.data.local.ImageStorage
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
+import com.recordsapp.data.remote.ItunesCoverArtService
 import com.recordsapp.data.remote.RecognitionApiException
 import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
@@ -58,7 +59,8 @@ class AddEditAlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: AlbumRepository,
     private val imageStorage: ImageStorage,
-    private val recognitionService: RecognitionService
+    private val recognitionService: RecognitionService,
+    private val coverArtService: ItunesCoverArtService
 ) : ViewModel() {
 
     private val albumId: Long? = savedStateHandle.get<Long>("albumId")
@@ -148,6 +150,16 @@ class AddEditAlbumViewModel @Inject constructor(
                 numRecords = result.numRecords.ifBlank { state.numRecords },
                 recognitionState = RecognitionState.Idle
             )
+        }
+        val artist = result.artistName
+        val album = result.albumName
+        if (artist.isNotBlank() && album.isNotBlank()) {
+            viewModelScope.launch {
+                val path = coverArtService.fetchAndSave(artist, album)
+                if (path != null) {
+                    _state.update { it.copy(coverImageUri = null, existingCoverPath = path) }
+                }
+            }
         }
     }
 

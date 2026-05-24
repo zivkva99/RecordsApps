@@ -25,6 +25,12 @@ class ImageStorage @Inject constructor(
         return file.absolutePath
     }
 
+    fun saveImageFromBytes(bytes: ByteArray): String {
+        val file = File(context.filesDir, "cover_${UUID.randomUUID()}.jpg")
+        file.writeBytes(bytes)
+        return file.absolutePath
+    }
+
     fun deleteImage(path: String) {
         File(path).delete()
     }
