@@ -109,8 +109,8 @@ class AddEditAlbumViewModel @Inject constructor(
     fun onNumRecordsChanged(value: String) { _state.update { it.copy(numRecords = value) } }
     fun onYearChanged(value: String) { _state.update { it.copy(year = value) } }
     fun onCommentChanged(value: String) { _state.update { it.copy(comment = value) } }
-    fun onGradeSide1Changed(grade: Grade) { _state.update { it.copy(gradeSide1 = grade) } }
-    fun onGradeSide2Changed(grade: Grade) { _state.update { it.copy(gradeSide2 = grade) } }
+    fun onGradeSide1Changed(grade: Grade?) { _state.update { it.copy(gradeSide1 = grade) } }
+    fun onGradeSide2Changed(grade: Grade?) { _state.update { it.copy(gradeSide2 = grade) } }
     fun onCountryChanged(country: Country) { _state.update { it.copy(country = country) } }
     fun onListenedChanged(value: Boolean) { _state.update { it.copy(listened = value) } }
 

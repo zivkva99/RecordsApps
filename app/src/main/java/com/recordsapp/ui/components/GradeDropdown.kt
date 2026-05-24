@@ -20,7 +20,7 @@ import com.recordsapp.domain.model.Grade
 fun GradeDropdown(
     label: String,
     selectedGrade: Grade?,
-    onGradeSelected: (Grade) -> Unit,
+    onGradeSelected: (Grade?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -31,7 +31,7 @@ fun GradeDropdown(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = selectedGrade?.displayName ?: "",
+            value = selectedGrade?.displayName ?: "None",
             onValueChange = {},
             readOnly = true,
             label = { Text(label) },
@@ -44,6 +44,13 @@ fun GradeDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            DropdownMenuItem(
+                text = { Text("None") },
+                onClick = {
+                    onGradeSelected(null)
+                    expanded = false
+                }
+            )
             Grade.entries.forEach { grade ->
                 DropdownMenuItem(
                     text = { Text(grade.displayName) },

@@ -40,8 +40,8 @@ class AddCopyViewModel @Inject constructor(
     private val _saveComplete = MutableSharedFlow<Boolean>()
     val saveComplete: SharedFlow<Boolean> = _saveComplete.asSharedFlow()
 
-    fun onGradeSide1Changed(grade: Grade) { _state.update { it.copy(gradeSide1 = grade) } }
-    fun onGradeSide2Changed(grade: Grade) { _state.update { it.copy(gradeSide2 = grade) } }
+    fun onGradeSide1Changed(grade: Grade?) { _state.update { it.copy(gradeSide1 = grade) } }
+    fun onGradeSide2Changed(grade: Grade?) { _state.update { it.copy(gradeSide2 = grade) } }
     fun onCountryChanged(country: Country) { _state.update { it.copy(country = country) } }
     fun onListenedChanged(value: Boolean) { _state.update { it.copy(listened = value) } }
 
