@@ -141,48 +141,46 @@ fun AddEditAlbumScreen(
                 maxLines = 5
             )
 
-            if (!state.isEditing) {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            Text(
+                text = if (state.isEditing) "Copy Details" else "First Copy Details",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            GradeDropdown(
+                label = if (state.listened) "Grade Side 1 *" else "Grade Side 1",
+                selectedGrade = state.gradeSide1,
+                onGradeSelected = viewModel::onGradeSide1Changed,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            GradeDropdown(
+                label = if (state.listened) "Grade Side 2 *" else "Grade Side 2",
+                selectedGrade = state.gradeSide2,
+                onGradeSelected = viewModel::onGradeSide2Changed,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            CountryDropdown(
+                selectedCountry = state.country,
+                onCountrySelected = viewModel::onCountryChanged,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "First Copy Details",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.fillMaxWidth()
+                    text = "Listened",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
                 )
-
-                GradeDropdown(
-                    label = "Grade Side 1 *",
-                    selectedGrade = state.gradeSide1,
-                    onGradeSelected = viewModel::onGradeSide1Changed,
-                    modifier = Modifier.fillMaxWidth()
+                Switch(
+                    checked = state.listened,
+                    onCheckedChange = viewModel::onListenedChanged
                 )
-
-                GradeDropdown(
-                    label = "Grade Side 2 *",
-                    selectedGrade = state.gradeSide2,
-                    onGradeSelected = viewModel::onGradeSide2Changed,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                CountryDropdown(
-                    selectedCountry = state.country,
-                    onCountrySelected = viewModel::onCountryChanged,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Listened",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = state.listened,
-                        onCheckedChange = viewModel::onListenedChanged
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -193,11 +191,8 @@ fun AddEditAlbumScreen(
                 enabled = !state.isSaving &&
                     state.artistName.isNotBlank() &&
                     state.albumName.isNotBlank() &&
-                    (state.isEditing || (
-                        state.gradeSide1 != null &&
-                            state.gradeSide2 != null &&
-                            state.country != null
-                        ))
+                    state.country != null &&
+                    (!state.listened || (state.gradeSide1 != null && state.gradeSide2 != null))
             ) {
                 if (state.isSaving) {
                     CircularProgressIndicator(

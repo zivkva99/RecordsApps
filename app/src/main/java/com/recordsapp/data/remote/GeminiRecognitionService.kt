@@ -3,7 +3,6 @@ package com.recordsapp.data.remote
 import android.content.Context
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import com.recordsapp.BuildConfig
 import com.recordsapp.domain.model.Confidence
 import com.recordsapp.domain.model.RecognitionResult
@@ -53,24 +52,19 @@ class GeminiRecognitionService @Inject constructor(
         }.toString()
 
         val request = Request.Builder()
-            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
+            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
             .post(requestBody.toRequestBody("application/json".toMediaType()))
             .build()
 
         val response = client.newCall(request).execute()
         response.use { resp ->
-            if (!resp.isSuccessful) {
-                Log.e(TAG, "API error ${resp.code}: ${resp.body?.string()}")
-                throw RecognitionApiException(resp.code)
-            }
+            if (!resp.isSuccessful) throw RecognitionApiException(resp.code)
             val body = resp.body?.string() ?: throw IllegalStateException("Empty response")
-            Log.d(TAG, "API response: $body")
             parseGeminiResponse(body)
         }
     }
 
     companion object {
-        private const val TAG = "GeminiRecognition"
         private const val PROMPT = """You are identifying a vinyl record from its cover photo.
 Return ONLY a JSON object with these fields:
 {
@@ -114,7 +108,6 @@ internal fun parseGeminiResponse(json: String): RecognitionResult {
             confidence = if (result.optString("confidence", "low") == "high") Confidence.HIGH else Confidence.LOW
         )
     } catch (e: Exception) {
-        Log.e("GeminiRecognition", "Parse failed", e)
         throw RecognitionParseException(e)
     }
 }

@@ -49,6 +49,7 @@ data class AddEditAlbumState(
     val isEditing: Boolean = false,
     val isSaving: Boolean = false,
     val existingCoverPath: String? = null,
+    val copyId: Long? = null,
     val recognitionState: RecognitionState = RecognitionState.Idle
 )
 
@@ -85,6 +86,7 @@ class AddEditAlbumViewModel @Inject constructor(
                         year = awc.album.year.toString(),
                         comment = awc.album.comment,
                         existingCoverPath = awc.album.coverImagePath,
+                        copyId = firstCopy?.id,
                         gradeSide1 = firstCopy?.let {
                             Grade.entries.find { g -> g.displayName == it.gradeSide1 }
                         },
@@ -164,9 +166,8 @@ class AddEditAlbumViewModel @Inject constructor(
     fun save() {
         val current = _state.value
         if (current.artistName.isBlank() || current.albumName.isBlank()) return
-        if (!current.isEditing &&
-            (current.gradeSide1 == null || current.gradeSide2 == null || current.country == null)
-        ) return
+        if (current.country == null) return
+        if (current.listened && (current.gradeSide1 == null || current.gradeSide2 == null)) return
 
         _state.update { it.copy(isSaving = true) }
 
@@ -188,6 +189,19 @@ class AddEditAlbumViewModel @Inject constructor(
                     comment = current.comment.trim()
                 )
                 repository.updateAlbum(album)
+                val copyId = current.copyId
+                if (copyId != null) {
+                    repository.updateCopy(
+                        CopyEntity(
+                            id = copyId,
+                            albumId = albumId,
+                            gradeSide1 = current.gradeSide1?.displayName ?: "",
+                            gradeSide2 = current.gradeSide2?.displayName ?: "",
+                            country = current.country.displayName,
+                            listened = current.listened
+                        )
+                    )
+                }
             } else {
                 val album = AlbumEntity(
                     artistName = current.artistName.trim(),
@@ -199,9 +213,9 @@ class AddEditAlbumViewModel @Inject constructor(
                 )
                 val copy = CopyEntity(
                     albumId = 0,
-                    gradeSide1 = current.gradeSide1!!.displayName,
-                    gradeSide2 = current.gradeSide2!!.displayName,
-                    country = current.country!!.displayName,
+                    gradeSide1 = current.gradeSide1?.displayName ?: "",
+                    gradeSide2 = current.gradeSide2?.displayName ?: "",
+                    country = current.country.displayName,
                     listened = current.listened
                 )
                 repository.insertAlbumWithCopy(album, copy)

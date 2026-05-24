@@ -69,14 +69,14 @@ fun AddCopyScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             GradeDropdown(
-                label = "Grade Side 1 *",
+                label = if (state.listened) "Grade Side 1 *" else "Grade Side 1",
                 selectedGrade = state.gradeSide1,
                 onGradeSelected = viewModel::onGradeSide1Changed,
                 modifier = Modifier.fillMaxWidth()
             )
 
             GradeDropdown(
-                label = "Grade Side 2 *",
+                label = if (state.listened) "Grade Side 2 *" else "Grade Side 2",
                 selectedGrade = state.gradeSide2,
                 onGradeSelected = viewModel::onGradeSide2Changed,
                 modifier = Modifier.fillMaxWidth()
@@ -109,9 +109,8 @@ fun AddCopyScreen(
                 onClick = viewModel::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isSaving &&
-                    state.gradeSide1 != null &&
-                    state.gradeSide2 != null &&
-                    state.country != null
+                    state.country != null &&
+                    (!state.listened || (state.gradeSide1 != null && state.gradeSide2 != null))
             ) {
                 if (state.isSaving) {
                     CircularProgressIndicator(

@@ -47,15 +47,16 @@ class AddCopyViewModel @Inject constructor(
 
     fun save() {
         val current = _state.value
-        if (current.gradeSide1 == null || current.gradeSide2 == null || current.country == null) return
+        if (current.country == null) return
+        if (current.listened && (current.gradeSide1 == null || current.gradeSide2 == null)) return
 
         _state.update { it.copy(isSaving = true) }
 
         viewModelScope.launch {
             val copy = CopyEntity(
                 albumId = albumId,
-                gradeSide1 = current.gradeSide1.displayName,
-                gradeSide2 = current.gradeSide2.displayName,
+                gradeSide1 = current.gradeSide1?.displayName ?: "",
+                gradeSide2 = current.gradeSide2?.displayName ?: "",
                 country = current.country.displayName,
                 listened = current.listened
             )
