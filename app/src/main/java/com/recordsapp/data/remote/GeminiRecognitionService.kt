@@ -1,6 +1,8 @@
 package com.recordsapp.data.remote
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import com.recordsapp.BuildConfig
@@ -29,11 +31,9 @@ class GeminiRecognitionService @Inject constructor(
         .build()
 
     override suspend fun recognize(uri: Uri): RecognitionResult = withContext(Dispatchers.IO) {
-        val imageBytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: throw IllegalStateException("Cannot open URI: $uri")
+        val imageBytes = compressImage(uri)
         val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
-
-        val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
+        val mimeType = "image/jpeg"
 
         val requestBody = JSONObject().apply {
             put("contents", JSONArray().apply {
@@ -52,7 +52,7 @@ class GeminiRecognitionService @Inject constructor(
         }.toString()
 
         val request = Request.Builder()
-            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
+            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
             .post(requestBody.toRequestBody("application/json".toMediaType()))
             .build()
 
@@ -64,7 +64,22 @@ class GeminiRecognitionService @Inject constructor(
         }
     }
 
+    private fun compressImage(uri: Uri): ByteArray {
+        val raw = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            ?: throw IllegalStateException("Cannot open URI: $uri")
+        val bitmap = BitmapFactory.decodeByteArray(raw, 0, raw.size)
+            ?: throw IllegalStateException("Cannot decode image")
+        val scale = minOf(MAX_DIM.toFloat() / bitmap.width, MAX_DIM.toFloat() / bitmap.height, 1f)
+        val scaled = if (scale < 1f)
+            Bitmap.createScaledBitmap(bitmap, (bitmap.width * scale).toInt(), (bitmap.height * scale).toInt(), true)
+        else bitmap
+        val out = java.io.ByteArrayOutputStream()
+        scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
+        return out.toByteArray()
+    }
+
     companion object {
+        private const val MAX_DIM = 1024
         private const val PROMPT = """You are identifying a vinyl record from its cover photo.
 Return ONLY a JSON object with these fields:
 {
