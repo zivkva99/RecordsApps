@@ -52,14 +52,15 @@ class GeminiRecognitionService @Inject constructor(
         }.toString()
 
         val request = Request.Builder()
-            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
+            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
             .post(requestBody.toRequestBody("application/json".toMediaType()))
             .build()
 
         val response = client.newCall(request).execute()
         response.use { resp ->
-            if (!resp.isSuccessful) throw RecognitionApiException(resp.code)
-            val body = resp.body?.string() ?: throw IllegalStateException("Empty response")
+            val body = resp.body?.string() ?: ""
+            if (!resp.isSuccessful) throw RecognitionApiException(resp.code, body)
+            if (body.isEmpty()) throw IllegalStateException("Empty response")
             parseGeminiResponse(body)
         }
     }
@@ -94,7 +95,7 @@ If a field cannot be determined, use an empty string."""
     }
 }
 
-class RecognitionApiException(val code: Int) : Exception("Recognition API error: $code")
+class RecognitionApiException(val code: Int, val body: String = "") : Exception("Recognition API error: $code")
 
 class RecognitionParseException(cause: Throwable) : Exception("Failed to parse recognition response", cause)
 

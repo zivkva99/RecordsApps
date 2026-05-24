@@ -129,10 +129,9 @@ class AddEditAlbumViewModel @Inject constructor(
             } catch (e: Exception) {
                 val message = when {
                     e is UnknownHostException -> "No internet connection. Retake or fill manually."
-                    e is RecognitionApiException && e.code == 403 -> "Recognition unavailable."
-                    e is RecognitionApiException && e.code == 429 -> "Too many requests. Please wait a moment and try again."
                     e is SocketTimeoutException -> "Recognition timed out."
-                    else -> "Couldn't read the result."
+                    e is RecognitionApiException -> "${e.code}: ${e.body.take(400)}"
+                    else -> "${e.javaClass.simpleName}: ${e.message}"
                 }
                 _state.update { it.copy(recognitionState = RecognitionState.Error(message)) }
             }
