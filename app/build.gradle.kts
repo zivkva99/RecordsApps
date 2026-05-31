@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     implementation(libs.camerax.core)
     implementation(libs.camerax.lifecycle)
