@@ -9,5 +9,7 @@ enum class Country(val displayName: String) {
     FRANCE("France"),
     NETHERLANDS("Netherlands"),
     ITALY("Italy"),
+    SPAIN("Spain"),
+    ECUADOR("Ecuador"),
     OTHER("Other")
 }
