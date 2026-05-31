@@ -20,24 +20,33 @@ class ItunesCoverArtService @Inject constructor(
         .callTimeout(10, TimeUnit.SECONDS)
         .build()
 
-    suspend fun fetchAndSave(artist: String, album: String): String? = withContext(Dispatchers.IO) {
+    suspend fun fetchUrl(artist: String, album: String): String? = withContext(Dispatchers.IO) {
         try {
             val query = URLEncoder.encode("$artist $album", "UTF-8")
             val searchReq = Request.Builder()
                 .url("https://itunes.apple.com/search?term=$query&media=music&entity=album&limit=5")
                 .build()
-            val artworkUrl = client.newCall(searchReq).execute().use { resp ->
+            client.newCall(searchReq).execute().use { resp ->
                 if (!resp.isSuccessful) return@withContext null
                 val body = resp.body?.string() ?: return@withContext null
                 parseArtworkUrl(body)
-            } ?: return@withContext null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 
+    suspend fun fetchAndSave(artist: String, album: String): String? =
+        fetchUrlAndSave(fetchUrl(artist, album))
+
+    suspend fun fetchUrlAndSave(artworkUrl: String?): String? = withContext(Dispatchers.IO) {
+        if (artworkUrl == null) return@withContext null
+        try {
             val imageReq = Request.Builder().url(artworkUrl).build()
             val bytes = client.newCall(imageReq).execute().use { resp ->
                 if (!resp.isSuccessful) return@withContext null
                 resp.body?.bytes()
             } ?: return@withContext null
-
             imageStorage.saveImageFromBytes(bytes)
         } catch (e: Exception) {
             null

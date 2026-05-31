@@ -32,7 +32,7 @@ import javax.inject.Inject
 sealed class RecognitionState {
     object Idle : RecognitionState()
     object Loading : RecognitionState()
-    data class Result(val result: RecognitionResult) : RecognitionState()
+    data class Result(val result: RecognitionResult, val coverArtUrl: String? = null) : RecognitionState()
     data class Error(val message: String) : RecognitionState()
 }
 
@@ -128,6 +128,15 @@ class AddEditAlbumViewModel @Inject constructor(
             try {
                 val result = recognitionService.recognize(uri)
                 _state.update { it.copy(recognitionState = RecognitionState.Result(result)) }
+                if (result.artistName.isNotBlank() && result.albumName.isNotBlank()) {
+                    val url = coverArtService.fetchUrl(result.artistName, result.albumName)
+                    _state.update { current ->
+                        val rs = current.recognitionState
+                        if (rs is RecognitionState.Result && rs.result == result) {
+                            current.copy(recognitionState = rs.copy(coverArtUrl = url))
+                        } else current
+                    }
+                }
             } catch (e: Exception) {
                 val message = when {
                     e is UnknownHostException -> "No internet connection. Retake or fill manually."
@@ -141,7 +150,9 @@ class AddEditAlbumViewModel @Inject constructor(
     }
 
     fun acceptRecognition() {
-        val result = (_state.value.recognitionState as? RecognitionState.Result)?.result ?: return
+        val recognitionResult = _state.value.recognitionState as? RecognitionState.Result ?: return
+        val result = recognitionResult.result
+        val knownUrl = recognitionResult.coverArtUrl
         _state.update { state ->
             state.copy(
                 artistName = result.artistName.ifBlank { state.artistName },
@@ -155,7 +166,11 @@ class AddEditAlbumViewModel @Inject constructor(
         val album = result.albumName
         if (artist.isNotBlank() && album.isNotBlank()) {
             viewModelScope.launch {
-                val path = coverArtService.fetchAndSave(artist, album)
+                val path = if (knownUrl != null) {
+                    coverArtService.fetchUrlAndSave(knownUrl)
+                } else {
+                    coverArtService.fetchAndSave(artist, album)
+                }
                 if (path != null) {
                     _state.update { it.copy(coverImageUri = null, existingCoverPath = path) }
                 }
