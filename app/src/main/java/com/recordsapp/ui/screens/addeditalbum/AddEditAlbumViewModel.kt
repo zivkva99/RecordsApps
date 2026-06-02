@@ -32,7 +32,7 @@ import javax.inject.Inject
 sealed class RecognitionState {
     object Idle : RecognitionState()
     object Loading : RecognitionState()
-    data class Result(val result: RecognitionResult, val coverArtUrl: String? = null) : RecognitionState()
+    data class Result(val result: RecognitionResult, val coverArtUrls: List<String> = emptyList()) : RecognitionState()
     data class Error(val message: String) : RecognitionState()
 }
 
@@ -206,11 +206,11 @@ class AddEditAlbumViewModel @Inject constructor(
                 val result = recognitionService.recognize(uri)
                 _state.update { it.copy(recognitionState = RecognitionState.Result(result)) }
                 if (result.artistName.isNotBlank() && result.albumName.isNotBlank()) {
-                    val url = coverArtService.fetchUrl(result.artistName, result.albumName)
+                    val urls = coverArtService.fetchUrls(result.artistName, result.albumName)
                     _state.update { current ->
                         val rs = current.recognitionState
                         if (rs is RecognitionState.Result && rs.result == result) {
-                            current.copy(recognitionState = rs.copy(coverArtUrl = url))
+                            current.copy(recognitionState = rs.copy(coverArtUrls = urls))
                         } else current
                     }
                 }
@@ -226,10 +226,9 @@ class AddEditAlbumViewModel @Inject constructor(
         }
     }
 
-    fun acceptRecognition() {
+    fun acceptRecognition(selectedCoverUrl: String?) {
         val recognitionResult = _state.value.recognitionState as? RecognitionState.Result ?: return
         val result = recognitionResult.result
-        val knownUrl = recognitionResult.coverArtUrl
         _state.update { state ->
             state.copy(
                 artistName = result.artistName.ifBlank { state.artistName },
@@ -239,20 +238,15 @@ class AddEditAlbumViewModel @Inject constructor(
                 recognitionState = RecognitionState.Idle
             )
         }
-        val artist = result.artistName
-        val album = result.albumName
-        if (artist.isNotBlank() && album.isNotBlank()) {
+        if (selectedCoverUrl != null) {
             viewModelScope.launch {
-                val path = if (knownUrl != null) {
-                    coverArtService.fetchUrlAndSave(knownUrl)
-                } else {
-                    coverArtService.fetchAndSave(artist, album)
-                }
+                val path = coverArtService.fetchUrlAndSave(selectedCoverUrl)
                 if (path != null) {
                     _state.update { it.copy(coverImageUri = null, existingCoverPath = path) }
                 }
             }
         }
+        // selectedCoverUrl == null → camera photo (coverImageUri) stays as-is
     }
 
     fun rejectRecognition() {

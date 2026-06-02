@@ -53,10 +53,37 @@ class ItunesCoverArtService @Inject constructor(
         }
     }
 
+    suspend fun fetchUrls(artist: String, album: String): List<String> = withContext(Dispatchers.IO) {
+        try {
+            val query = URLEncoder.encode("$artist $album", "UTF-8")
+            val searchReq = Request.Builder()
+                .url("https://itunes.apple.com/search?term=$query&media=music&entity=album&limit=5")
+                .build()
+            client.newCall(searchReq).execute().use { resp ->
+                if (!resp.isSuccessful) return@withContext emptyList()
+                val body = resp.body?.string() ?: return@withContext emptyList()
+                parseArtworkUrls(body)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     private fun parseArtworkUrl(json: String): String? {
         val results = JSONObject(json).optJSONArray("results") ?: return null
         if (results.length() == 0) return null
         val url = results.getJSONObject(0).optString("artworkUrl100").ifBlank { return null }
         return url.replace("100x100bb", "600x600bb")
+    }
+
+    private fun parseArtworkUrls(json: String): List<String> {
+        val results = JSONObject(json).optJSONArray("results") ?: return emptyList()
+        val urls = mutableListOf<String>()
+        for (i in 0 until results.length()) {
+            val raw = results.getJSONObject(i).optString("artworkUrl100")
+            if (raw.isBlank()) continue
+            urls.add(raw.replace("100x100bb", "600x600bb"))
+        }
+        return urls
     }
 }

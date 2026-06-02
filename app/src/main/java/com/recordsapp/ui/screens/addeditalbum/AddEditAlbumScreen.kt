@@ -293,7 +293,8 @@ fun AddEditAlbumScreen(
     if (state.recognitionState != RecognitionState.Idle) {
         RecordRecognitionBottomSheet(
             recognitionState = state.recognitionState,
-            onAccept = viewModel::acceptRecognition,
+            cameraImageUri = state.coverImageUri,
+            onAccept = { url -> viewModel.acceptRecognition(url) },
             onReject = viewModel::rejectRecognition,
             onRetake = viewModel::retakePhoto
         )
