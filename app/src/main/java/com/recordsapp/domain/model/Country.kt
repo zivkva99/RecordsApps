@@ -11,5 +11,6 @@ enum class Country(val displayName: String) {
     ITALY("Italy"),
     SPAIN("Spain"),
     ECUADOR("Ecuador"),
-    OTHER("Other")
+    OTHER("Other"),
+    UNKNOWN("Unknown")
 }
