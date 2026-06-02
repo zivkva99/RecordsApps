@@ -57,7 +57,7 @@ class ItunesCoverArtService @Inject constructor(
         try {
             val query = URLEncoder.encode("$artist $album", "UTF-8")
             val searchReq = Request.Builder()
-                .url("https://itunes.apple.com/search?term=$query&media=music&entity=album&limit=5")
+                .url("https://itunes.apple.com/search?term=$query&media=music&entity=album&limit=20")
                 .build()
             client.newCall(searchReq).execute().use { resp ->
                 if (!resp.isSuccessful) return@withContext emptyList()
