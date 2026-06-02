@@ -2,6 +2,7 @@ package com.recordsapp.ui.screens.addeditalbum
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +11,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -142,28 +151,60 @@ fun AddEditAlbumScreen(
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-            Text(
-                text = if (state.isEditing) "Copy Details" else "First Copy Details",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.fillMaxWidth()
-            )
+
+            val selectedCopy = state.copies[state.selectedCopyIndex]
+            var copyDropdownExpanded by remember { mutableStateOf(false) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Copy Details",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Box {
+                    TextButton(onClick = { copyDropdownExpanded = true }) {
+                        Text("Copy ${state.selectedCopyIndex + 1} of ${state.copies.size}")
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = null
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = copyDropdownExpanded,
+                        onDismissRequest = { copyDropdownExpanded = false }
+                    ) {
+                        state.copies.forEachIndexed { index, _ ->
+                            DropdownMenuItem(
+                                text = { Text("Copy ${index + 1}") },
+                                onClick = {
+                                    viewModel.selectCopy(index)
+                                    copyDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
             GradeDropdown(
-                label = if (state.listened) "Grade Side 1 *" else "Grade Side 1",
-                selectedGrade = state.gradeSide1,
+                label = if (selectedCopy.listened) "Grade Side 1 *" else "Grade Side 1",
+                selectedGrade = selectedCopy.gradeSide1,
                 onGradeSelected = viewModel::onGradeSide1Changed,
                 modifier = Modifier.fillMaxWidth()
             )
 
             GradeDropdown(
-                label = if (state.listened) "Grade Side 2 *" else "Grade Side 2",
-                selectedGrade = state.gradeSide2,
+                label = if (selectedCopy.listened) "Grade Side 2 *" else "Grade Side 2",
+                selectedGrade = selectedCopy.gradeSide2,
                 onGradeSelected = viewModel::onGradeSide2Changed,
                 modifier = Modifier.fillMaxWidth()
             )
 
             CountryDropdown(
-                selectedCountry = state.country,
+                selectedCountry = selectedCopy.country,
                 onCountrySelected = viewModel::onCountryChanged,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -178,9 +219,32 @@ fun AddEditAlbumScreen(
                     modifier = Modifier.weight(1f)
                 )
                 Switch(
-                    checked = state.listened,
+                    checked = selectedCopy.listened,
                     onCheckedChange = viewModel::onListenedChanged
                 )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = viewModel::addCopy) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Add Copy")
+                }
+                if (state.copies.size > 1) {
+                    TextButton(onClick = viewModel::requestRemoveCopy) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Remove Copy", color = MaterialTheme.colorScheme.error)
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -191,8 +255,8 @@ fun AddEditAlbumScreen(
                 enabled = !state.isSaving &&
                     state.artistName.isNotBlank() &&
                     state.albumName.isNotBlank() &&
-                    state.country != null &&
-                    (!state.listened || (state.gradeSide1 != null && state.gradeSide2 != null))
+                    state.copies.all { it.country != null } &&
+                    state.copies.none { it.listened && (it.gradeSide1 == null || it.gradeSide2 == null) }
             ) {
                 if (state.isSaving) {
                     CircularProgressIndicator(
@@ -206,6 +270,24 @@ fun AddEditAlbumScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+    if (state.showRemoveCopyDialog) {
+        AlertDialog(
+            onDismissRequest = viewModel::dismissRemoveCopyDialog,
+            title = { Text("Delete Copy #${state.selectedCopyIndex + 1}?") },
+            text = { Text("This cannot be undone.") },
+            confirmButton = {
+                TextButton(onClick = viewModel::confirmRemoveCopy) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = viewModel::dismissRemoveCopyDialog) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     if (state.recognitionState != RecognitionState.Idle) {

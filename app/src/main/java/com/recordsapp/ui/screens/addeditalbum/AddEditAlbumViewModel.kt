@@ -36,6 +36,14 @@ sealed class RecognitionState {
     data class Error(val message: String) : RecognitionState()
 }
 
+data class CopyFormState(
+    val id: Long? = null,
+    val gradeSide1: Grade? = null,
+    val gradeSide2: Grade? = null,
+    val country: Country? = null,
+    val listened: Boolean = false
+)
+
 data class AddEditAlbumState(
     val artistName: String = "",
     val albumName: String = "",
@@ -43,14 +51,13 @@ data class AddEditAlbumState(
     val year: String = "",
     val coverImageUri: Uri? = null,
     val comment: String = "",
-    val gradeSide1: Grade? = null,
-    val gradeSide2: Grade? = null,
-    val country: Country? = null,
-    val listened: Boolean = false,
+    val copies: List<CopyFormState> = listOf(CopyFormState()),
+    val selectedCopyIndex: Int = 0,
+    val removedCopyIds: Set<Long> = emptySet(),
+    val showRemoveCopyDialog: Boolean = false,
     val isEditing: Boolean = false,
     val isSaving: Boolean = false,
     val existingCoverPath: String? = null,
-    val copyId: Long? = null,
     val recognitionState: RecognitionState = RecognitionState.Idle
 )
 
@@ -80,7 +87,15 @@ class AddEditAlbumViewModel @Inject constructor(
         if (albumId != null) {
             viewModelScope.launch {
                 repository.getAlbumWithCopies(albumId).first()?.let { awc ->
-                    val firstCopy = awc.copies.firstOrNull()
+                    val copyStates = awc.copies.map { copy ->
+                        CopyFormState(
+                            id = copy.id,
+                            gradeSide1 = Grade.entries.find { g -> g.displayName == copy.gradeSide1 },
+                            gradeSide2 = Grade.entries.find { g -> g.displayName == copy.gradeSide2 },
+                            country = Country.entries.find { c -> c.displayName == copy.country },
+                            listened = copy.listened
+                        )
+                    }.ifEmpty { listOf(CopyFormState()) }
                     _state.value = AddEditAlbumState(
                         artistName = awc.album.artistName,
                         albumName = awc.album.albumName,
@@ -88,17 +103,7 @@ class AddEditAlbumViewModel @Inject constructor(
                         year = awc.album.year.toString(),
                         comment = awc.album.comment,
                         existingCoverPath = awc.album.coverImagePath,
-                        copyId = firstCopy?.id,
-                        gradeSide1 = firstCopy?.let {
-                            Grade.entries.find { g -> g.displayName == it.gradeSide1 }
-                        },
-                        gradeSide2 = firstCopy?.let {
-                            Grade.entries.find { g -> g.displayName == it.gradeSide2 }
-                        },
-                        country = firstCopy?.let {
-                            Country.entries.find { c -> c.displayName == it.country }
-                        },
-                        listened = firstCopy?.listened ?: false,
+                        copies = copyStates,
                         isEditing = true
                     )
                 }
@@ -111,10 +116,82 @@ class AddEditAlbumViewModel @Inject constructor(
     fun onNumRecordsChanged(value: String) { _state.update { it.copy(numRecords = value) } }
     fun onYearChanged(value: String) { _state.update { it.copy(year = value) } }
     fun onCommentChanged(value: String) { _state.update { it.copy(comment = value) } }
-    fun onGradeSide1Changed(grade: Grade?) { _state.update { it.copy(gradeSide1 = grade) } }
-    fun onGradeSide2Changed(grade: Grade?) { _state.update { it.copy(gradeSide2 = grade) } }
-    fun onCountryChanged(country: Country) { _state.update { it.copy(country = country) } }
-    fun onListenedChanged(value: Boolean) { _state.update { it.copy(listened = value) } }
+
+    fun onGradeSide1Changed(grade: Grade?) {
+        _state.update { s ->
+            val updated = s.copies.toMutableList()
+            updated[s.selectedCopyIndex] = updated[s.selectedCopyIndex].copy(gradeSide1 = grade)
+            s.copy(copies = updated)
+        }
+    }
+
+    fun onGradeSide2Changed(grade: Grade?) {
+        _state.update { s ->
+            val updated = s.copies.toMutableList()
+            updated[s.selectedCopyIndex] = updated[s.selectedCopyIndex].copy(gradeSide2 = grade)
+            s.copy(copies = updated)
+        }
+    }
+
+    fun onCountryChanged(country: Country) {
+        _state.update { s ->
+            val updated = s.copies.toMutableList()
+            updated[s.selectedCopyIndex] = updated[s.selectedCopyIndex].copy(country = country)
+            s.copy(copies = updated)
+        }
+    }
+
+    fun onListenedChanged(value: Boolean) {
+        _state.update { s ->
+            val updated = s.copies.toMutableList()
+            updated[s.selectedCopyIndex] = updated[s.selectedCopyIndex].copy(listened = value)
+            s.copy(copies = updated)
+        }
+    }
+
+    fun selectCopy(index: Int) {
+        _state.update { it.copy(selectedCopyIndex = index) }
+    }
+
+    fun addCopy() {
+        _state.update { s ->
+            val newCopies = s.copies + CopyFormState()
+            s.copy(copies = newCopies, selectedCopyIndex = newCopies.lastIndex)
+        }
+    }
+
+    fun requestRemoveCopy() {
+        _state.update { s ->
+            val copy = s.copies[s.selectedCopyIndex]
+            if (copy.id != null) {
+                s.copy(showRemoveCopyDialog = true)
+            } else {
+                val newCopies = s.copies.toMutableList().also { it.removeAt(s.selectedCopyIndex) }
+                val newIndex = (s.selectedCopyIndex - 1).coerceAtLeast(0)
+                s.copy(copies = newCopies, selectedCopyIndex = newIndex)
+            }
+        }
+    }
+
+    fun confirmRemoveCopy() {
+        _state.update { s ->
+            val index = s.selectedCopyIndex
+            val copy = s.copies[index]
+            val newRemovedIds = if (copy.id != null) s.removedCopyIds + copy.id else s.removedCopyIds
+            val newCopies = s.copies.toMutableList().also { it.removeAt(index) }
+            val newIndex = (index - 1).coerceAtLeast(0)
+            s.copy(
+                copies = newCopies,
+                selectedCopyIndex = newIndex,
+                removedCopyIds = newRemovedIds,
+                showRemoveCopyDialog = false
+            )
+        }
+    }
+
+    fun dismissRemoveCopyDialog() {
+        _state.update { it.copy(showRemoveCopyDialog = false) }
+    }
 
     fun onCoverImageChanged(uri: Uri) {
         _state.update { it.copy(coverImageUri = uri) }
@@ -192,8 +269,8 @@ class AddEditAlbumViewModel @Inject constructor(
     fun save() {
         val current = _state.value
         if (current.artistName.isBlank() || current.albumName.isBlank()) return
-        if (current.country == null) return
-        if (current.listened && (current.gradeSide1 == null || current.gradeSide2 == null)) return
+        if (current.copies.any { it.country == null }) return
+        if (current.copies.any { it.listened && (it.gradeSide1 == null || it.gradeSide2 == null) }) return
 
         _state.update { it.copy(isSaving = true) }
 
@@ -205,46 +282,70 @@ class AddEditAlbumViewModel @Inject constructor(
             }
 
             if (current.isEditing && albumId != null) {
-                val album = AlbumEntity(
-                    id = albumId,
-                    artistName = current.artistName.trim(),
-                    albumName = current.albumName.trim(),
-                    numRecords = current.numRecords.toIntOrNull() ?: 1,
-                    year = current.year.toIntOrNull() ?: 0,
-                    coverImagePath = coverPath,
-                    comment = current.comment.trim()
+                repository.updateAlbum(
+                    AlbumEntity(
+                        id = albumId,
+                        artistName = current.artistName.trim(),
+                        albumName = current.albumName.trim(),
+                        numRecords = current.numRecords.toIntOrNull() ?: 1,
+                        year = current.year.toIntOrNull() ?: 0,
+                        coverImagePath = coverPath,
+                        comment = current.comment.trim()
+                    )
                 )
-                repository.updateAlbum(album)
-                val copyId = current.copyId
-                if (copyId != null) {
-                    repository.updateCopy(
+                for (copy in current.copies) {
+                    val entity = CopyEntity(
+                        id = copy.id ?: 0,
+                        albumId = albumId,
+                        gradeSide1 = copy.gradeSide1?.displayName ?: "",
+                        gradeSide2 = copy.gradeSide2?.displayName ?: "",
+                        country = copy.country!!.displayName,
+                        listened = copy.listened
+                    )
+                    if (copy.id != null) repository.updateCopy(entity)
+                    else repository.insertCopy(entity)
+                }
+                for (removedId in current.removedCopyIds) {
+                    repository.deleteCopy(
                         CopyEntity(
-                            id = copyId,
+                            id = removedId,
                             albumId = albumId,
-                            gradeSide1 = current.gradeSide1?.displayName ?: "",
-                            gradeSide2 = current.gradeSide2?.displayName ?: "",
-                            country = current.country.displayName,
-                            listened = current.listened
+                            gradeSide1 = "",
+                            gradeSide2 = "",
+                            country = ""
                         )
                     )
                 }
             } else {
-                val album = AlbumEntity(
-                    artistName = current.artistName.trim(),
-                    albumName = current.albumName.trim(),
-                    numRecords = current.numRecords.toIntOrNull() ?: 1,
-                    year = current.year.toIntOrNull() ?: 0,
-                    coverImagePath = coverPath,
-                    comment = current.comment.trim()
+                val firstCopy = current.copies.first()
+                val newAlbumId = repository.insertAlbumWithCopy(
+                    AlbumEntity(
+                        artistName = current.artistName.trim(),
+                        albumName = current.albumName.trim(),
+                        numRecords = current.numRecords.toIntOrNull() ?: 1,
+                        year = current.year.toIntOrNull() ?: 0,
+                        coverImagePath = coverPath,
+                        comment = current.comment.trim()
+                    ),
+                    CopyEntity(
+                        albumId = 0,
+                        gradeSide1 = firstCopy.gradeSide1?.displayName ?: "",
+                        gradeSide2 = firstCopy.gradeSide2?.displayName ?: "",
+                        country = firstCopy.country!!.displayName,
+                        listened = firstCopy.listened
+                    )
                 )
-                val copy = CopyEntity(
-                    albumId = 0,
-                    gradeSide1 = current.gradeSide1?.displayName ?: "",
-                    gradeSide2 = current.gradeSide2?.displayName ?: "",
-                    country = current.country.displayName,
-                    listened = current.listened
-                )
-                repository.insertAlbumWithCopy(album, copy)
+                for (copy in current.copies.drop(1)) {
+                    repository.insertCopy(
+                        CopyEntity(
+                            albumId = newAlbumId,
+                            gradeSide1 = copy.gradeSide1?.displayName ?: "",
+                            gradeSide2 = copy.gradeSide2?.displayName ?: "",
+                            country = copy.country!!.displayName,
+                            listened = copy.listened
+                        )
+                    )
+                }
             }
             _state.update { it.copy(isSaving = false) }
             _saveComplete.emit(true)
