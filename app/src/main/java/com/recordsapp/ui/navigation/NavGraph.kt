@@ -10,6 +10,7 @@ import com.recordsapp.ui.screens.addcopy.AddCopyScreen
 import com.recordsapp.ui.screens.addeditalbum.AddEditAlbumScreen
 import com.recordsapp.ui.screens.albumdetail.AlbumDetailScreen
 import com.recordsapp.ui.screens.albumlist.AlbumListScreen
+import com.recordsapp.ui.screens.backup.BackupScreen
 
 @Composable
 fun RecordsNavGraph(navController: NavHostController) {
@@ -24,6 +25,9 @@ fun RecordsNavGraph(navController: NavHostController) {
                 },
                 onAddAlbumClick = {
                     navController.navigate(Screen.AddAlbum.route)
+                },
+                onSettingsClick = {
+                    navController.navigate(Screen.Backup.route)
                 }
             )
         }
@@ -63,6 +67,12 @@ fun RecordsNavGraph(navController: NavHostController) {
             arguments = listOf(navArgument("albumId") { type = NavType.LongType })
         ) {
             AddCopyScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Backup.route) {
+            BackupScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

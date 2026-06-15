@@ -12,4 +12,5 @@ sealed class Screen(val route: String) {
     data object AddCopy : Screen("add_copy/{albumId}") {
         fun createRoute(albumId: Long) = "add_copy/$albumId"
     }
+    data object Backup : Screen("backup")
 }
