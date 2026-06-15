@@ -41,4 +41,10 @@ interface AlbumDao {
 
     @Delete
     suspend fun deleteAlbum(album: AlbumEntity)
+
+    @Query("DELETE FROM albums")
+    suspend fun deleteAllAlbums()
+
+    @Query("SELECT COUNT(*) FROM albums WHERE artistName = :artist AND albumName = :album")
+    suspend fun countByArtistAndAlbum(artist: String, album: String): Int
 }

@@ -1,18 +1,22 @@
 package com.recordsapp.data.repository
 
+import androidx.room.withTransaction
+import com.recordsapp.data.local.RecordsDatabase
 import com.recordsapp.data.local.dao.AlbumDao
 import com.recordsapp.data.local.dao.CopyDao
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
 import com.recordsapp.data.local.relation.AlbumWithCopies
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AlbumRepository @Inject constructor(
     private val albumDao: AlbumDao,
-    private val copyDao: CopyDao
+    private val copyDao: CopyDao,
+    private val database: RecordsDatabase
 ) {
     fun getAllAlbumsWithCopies(): Flow<List<AlbumWithCopies>> =
         albumDao.getAllAlbumsWithCopies()
@@ -43,4 +47,14 @@ class AlbumRepository @Inject constructor(
 
     suspend fun deleteCopy(copy: CopyEntity) =
         copyDao.deleteCopy(copy)
+
+    suspend fun getAllAlbumsWithCopiesOnce(): List<AlbumWithCopies> =
+        albumDao.getAllAlbumsWithCopies().first()
+
+    suspend fun deleteAll() = albumDao.deleteAllAlbums()
+
+    suspend fun albumExists(artist: String, albumName: String): Boolean =
+        albumDao.countByArtistAndAlbum(artist, albumName) > 0
+
+    suspend fun <T> withTransaction(block: suspend () -> T): T = database.withTransaction(block)
 }
