@@ -2,7 +2,6 @@ package com.recordsapp.data.drive
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -84,14 +83,8 @@ class DriveBackupRepository @Inject constructor() {
         val metadata = """{"name":"$name","parents":["$folderId"]}"""
         val body = MultipartBody.Builder()
             .setType("multipart/related".toMediaType())
-            .addPart(
-                Headers.headersOf("Content-Type", "application/json; charset=UTF-8"),
-                metadata.toRequestBody()
-            )
-            .addPart(
-                Headers.headersOf("Content-Type", mimeType),
-                bytes.toRequestBody()
-            )
+            .addPart(metadata.toRequestBody("application/json; charset=UTF-8".toMediaType()))
+            .addPart(bytes.toRequestBody(mimeType.toMediaType()))
             .build()
         client.newCall(
             Request.Builder()
