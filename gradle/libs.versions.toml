@@ -13,6 +13,7 @@ activity-compose = "1.9.3"
 lifecycle = "2.8.7"
 core-ktx = "1.15.0"
 okhttp = "4.12.0"
+play-services-auth = "21.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -47,6 +48,8 @@ camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", vers
 camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
