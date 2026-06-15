@@ -71,7 +71,7 @@ class DriveBackupRepository @Inject constructor() {
                 .addHeader("Authorization", "Bearer $token")
                 .delete()
                 .build()
-        ).execute()
+        ).execute().close()
     }
 
     private suspend fun uploadFile(
@@ -99,7 +99,7 @@ class DriveBackupRepository @Inject constructor() {
                 .addHeader("Authorization", "Bearer $token")
                 .post(body)
                 .build()
-        ).execute()
+        ).execute().close()
     }
 
     private suspend fun downloadFile(token: String, fileId: String): ByteArray =
