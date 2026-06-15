@@ -3,6 +3,7 @@ package com.recordsapp.ui.screens.addeditalbum
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import com.recordsapp.data.local.ImageStorage
+import com.recordsapp.data.remote.ItunesCoverArtService
 import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
 import com.recordsapp.domain.model.Confidence
@@ -29,6 +30,7 @@ class AddEditAlbumViewModelRecognitionTest {
     private val fakeService = FakeRecognitionService()
     private val repository = mockk<AlbumRepository>(relaxed = true)
     private val imageStorage = mockk<ImageStorage>(relaxed = true)
+    private val coverArtService = mockk<ItunesCoverArtService>(relaxed = true)
     private val uri = mockk<Uri>()
 
     @Before
@@ -45,7 +47,8 @@ class AddEditAlbumViewModelRecognitionTest {
         savedStateHandle = SavedStateHandle(),
         repository = repository,
         imageStorage = imageStorage,
-        recognitionService = fakeService
+        recognitionService = fakeService,
+        coverArtService = coverArtService
     )
 
     @Test
@@ -78,7 +81,7 @@ class AddEditAlbumViewModelRecognitionTest {
         val viewModel = createViewModel()
         viewModel.onCoverImageChanged(uri)
 
-        viewModel.acceptRecognition()
+        viewModel.acceptRecognition(selectedCoverUrl = null)
 
         val state = viewModel.state.value
         assertEquals("Led Zeppelin", state.artistName)
