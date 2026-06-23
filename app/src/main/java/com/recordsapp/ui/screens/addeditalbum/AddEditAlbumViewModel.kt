@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.recordsapp.data.local.ImageStorage
+import com.recordsapp.data.local.QaExporter
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
 import com.recordsapp.data.remote.ItunesCoverArtService
@@ -67,7 +68,8 @@ class AddEditAlbumViewModel @Inject constructor(
     private val repository: AlbumRepository,
     private val imageStorage: ImageStorage,
     private val recognitionService: RecognitionService,
-    private val coverArtService: ItunesCoverArtService
+    private val coverArtService: ItunesCoverArtService,
+    private val qaExporter: QaExporter
 ) : ViewModel() {
 
     private val albumId: Long? = savedStateHandle.get<Long>("albumId")
@@ -82,6 +84,8 @@ class AddEditAlbumViewModel @Inject constructor(
     val retakeRequested: SharedFlow<Unit> = _retakeRequested.asSharedFlow()
 
     private var recognitionJob: Job? = null
+    private var cameraPhotoUri: Uri? = null
+    private var recognitionAccepted = false
 
     init {
         if (albumId != null) {
@@ -194,6 +198,8 @@ class AddEditAlbumViewModel @Inject constructor(
     }
 
     fun onCoverImageChanged(uri: Uri) {
+        cameraPhotoUri = uri
+        recognitionAccepted = false
         _state.update { it.copy(coverImageUri = uri) }
         recognizeRecord(uri)
     }
@@ -227,6 +233,7 @@ class AddEditAlbumViewModel @Inject constructor(
     }
 
     fun acceptRecognition(selectedCoverUrl: String?) {
+        recognitionAccepted = true
         val recognitionResult = _state.value.recognitionState as? RecognitionState.Result ?: return
         val result = recognitionResult.result
         _state.update { state ->
@@ -251,11 +258,14 @@ class AddEditAlbumViewModel @Inject constructor(
 
     fun rejectRecognition() {
         recognitionJob?.cancel()
+        recognitionAccepted = false
         _state.update { it.copy(recognitionState = RecognitionState.Idle) }
     }
 
     fun retakePhoto() {
         recognitionJob?.cancel()
+        recognitionAccepted = false
+        cameraPhotoUri = null
         _state.update { it.copy(recognitionState = RecognitionState.Idle, coverImageUri = null) }
         viewModelScope.launch { _retakeRequested.emit(Unit) }
     }
@@ -342,6 +352,23 @@ class AddEditAlbumViewModel @Inject constructor(
                 }
             }
             _state.update { it.copy(isSaving = false) }
+
+            if (!current.isEditing && recognitionAccepted) {
+                cameraPhotoUri?.let { uri ->
+                    runCatching {
+                        qaExporter.export(
+                            uri = uri,
+                            artistName = current.artistName.trim(),
+                            albumName = current.albumName.trim(),
+                            year = current.year,
+                            numRecords = current.numRecords
+                        )
+                    }
+                }
+                recognitionAccepted = false
+                cameraPhotoUri = null
+            }
+
             _saveComplete.emit(true)
         }
     }
