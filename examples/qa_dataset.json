@@ -139,5 +139,37 @@
         "year":  "1983",
         "numRecords":  "1",
         "addedAt":  "20260624_010657"
+    },
+    {
+        "filename":  "cover_20260624_150948.jpg",
+        "artistName":  "Shalom Hanoch",
+        "albumName":  "Machakim LaMashiach (Waiting For Messiah)",
+        "year":  "1985",
+        "numRecords":  "1",
+        "addedAt":  "20260624_150948"
+    },
+    {
+        "filename":  "cover_20260624_151056.jpg",
+        "artistName":  "Matti Caspi \u0026 Sasha Argov",
+        "albumName":  "Matityahu Ve\u0027Alexander (×ž×ª×ª×™×”×• ×•××œ×›×¡× ×“×¨)",
+        "year":  "1983",
+        "numRecords":  "1",
+        "addedAt":  "20260624_151056"
+    },
+    {
+        "filename":  "cover_20260624_151443.jpg",
+        "artistName":  "Yehudit Ravitz",
+        "albumName":  "Coming From Love",
+        "year":  "1988",
+        "numRecords":  "1",
+        "addedAt":  "20260624_151443"
+    },
+    {
+        "filename":  "cover_20260624_151643.jpg",
+        "artistName":  "Various Artists",
+        "albumName":  "Pais Tropical - Songs From Brazil",
+        "year":  "1978",
+        "numRecords":  "1",
+        "addedAt":  "20260624_151643"
     }
 ]
