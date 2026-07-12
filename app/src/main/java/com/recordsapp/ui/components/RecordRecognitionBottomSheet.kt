@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,7 +55,12 @@ fun RecordRecognitionBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onReject,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            // Swiping/back/scrim must not silently discard recognized data —
+            // only the explicit Accept/Reject/Retake buttons may close the sheet.
+            confirmValueChange = { it != SheetValue.Hidden }
+        )
     ) {
         when (recognitionState) {
             is RecognitionState.Loading -> {
