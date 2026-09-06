@@ -1,79 +1,4 @@
-package com.recordsapp.data.remote
-
-import android.content.Context
-import android.net.Uri
-import android.util.Base64
-import com.recordsapp.BuildConfig
-import com.recordsapp.domain.model.Confidence
-import com.recordsapp.domain.model.RecognitionResult
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONObject
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class GeminiRecognitionService @Inject constructor(
-    @ApplicationContext private val context: Context
-) : RecognitionService {
-
-    private val client = OkHttpClient.Builder()
-        .callTimeout(45, TimeUnit.SECONDS)
-        .build()
-
-    override suspend fun recognize(uri: Uri): RecognitionResult = withContext(Dispatchers.IO) {
-        val imageBytes = compressImage(uri)
-        val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
-        val mimeType = "image/jpeg"
-
-        val requestBody = JSONObject().apply {
-            put("contents", JSONArray().apply {
-                put(JSONObject().apply {
-                    put("parts", JSONArray().apply {
-                        put(JSONObject().apply { put("text", PROMPT) })
-                        put(JSONObject().apply {
-                            put("inlineData", JSONObject().apply {
-                                put("mimeType", mimeType)
-                                put("data", base64Image)
-                            })
-                        })
-                    })
-                })
-            })
-            put("generationConfig", JSONObject().apply {
-                put("thinkingConfig", JSONObject().apply {
-                    put("thinkingBudget", 8000)
-                })
-            })
-        }.toString()
-
-        val request = Request.Builder()
-            .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${BuildConfig.GEMINI_API_KEY}")
-            .post(requestBody.toRequestBody("application/json".toMediaType()))
-            .build()
-
-        val response = client.newCall(request).execute()
-        response.use { resp ->
-            val body = resp.body?.string() ?: ""
-            if (!resp.isSuccessful) throw RecognitionApiException(resp.code, body)
-            if (body.isEmpty()) throw IllegalStateException("Empty response")
-            parseGeminiResponse(body)
-        }
-    }
-
-    private fun compressImage(uri: Uri): ByteArray =
-        ImageCompression.fromUri(context, uri, MAX_DIM, quality = 85)
-
-    companion object {
-        private const val MAX_DIM = 1024
-        private const val PROMPT = """You are a music expert and vinyl record collector with encyclopedic knowledge of album covers, artwork, and discography. Your knowledge includes Discogs, AllMusic, Wikipedia, Spotify, and music databases worldwide.
+PROMPT = """You are a music expert and vinyl record collector with encyclopedic knowledge of album covers, artwork, and discography. Your knowledge includes Discogs, AllMusic, Wikipedia, Spotify, and music databases worldwide.
 
 Your task: identify the vinyl record in this photo.
 
@@ -106,7 +31,7 @@ Recognizing the artist from the cover photo/logo is not the same as knowing whic
 If the cover has little or no legible text and you are relying on recalling the artwork alone, use "high" confidence only when at least two independent, specific visual details (e.g. the exact color palette AND a distinctive image/composition detail) match your recollection of that specific album's cover — not just a general vibe or genre match. Otherwise use "low".
 
 YEAR — CRITICAL
-Use ONLY the original first commercial release year from Discogs or AllMusic. After identifying the album, ask yourself: "When was this specific album (not a live version, not a compilation, not a reissue) FIRST released?" Report that year precisely. Self-titled debut albums from the late 1960s may be from 1968–1970 even if the band is better known for later work.
+Use ONLY the original first commercial release year from Discogs or AllMusic. After identifying the album, ask yourself: "When was this specific album (not a live version, not a compilation, not a reissue) FIRST released?" Report that year precisely. Self-titled debut albums from the late 1960s may be from 1968-1970 even if the band is better known for later work.
 
 Return ONLY a JSON object:
 {
@@ -117,45 +42,3 @@ Return ONLY a JSON object:
   "confidence": "high" or "low"
 }
 Rules: "year" = 4-digit original first release; "numRecords" = disc count; "confidence" = "high" only if certain of ALL fields; empty string if unknown."""
-    }
-}
-
-class RecognitionApiException(val code: Int, val body: String = "") : Exception("Recognition API error: $code")
-
-class RecognitionParseException(cause: Throwable) : Exception("Failed to parse recognition response", cause)
-
-internal fun parseGeminiResponse(json: String): RecognitionResult {
-    try {
-        val parts = JSONObject(json)
-            .getJSONArray("candidates")
-            .getJSONObject(0)
-            .getJSONObject("content")
-            .getJSONArray("parts")
-        // Thinking mode returns a "thought" part first — find the last non-thought text part
-        var text = ""
-        for (i in parts.length() - 1 downTo 0) {
-            val part = parts.getJSONObject(i)
-            if (!part.optBoolean("thought", false) && part.has("text")) {
-                text = part.getString("text")
-                break
-            }
-        }
-
-        val cleaned = text.trim()
-            .removePrefix("```json")
-            .removePrefix("```")
-            .removeSuffix("```")
-            .trim()
-
-        val result = JSONObject(cleaned)
-        return RecognitionResult(
-            artistName = result.optString("artistName", ""),
-            albumName = result.optString("albumName", ""),
-            year = result.optString("year", ""),
-            numRecords = result.optString("numRecords", ""),
-            confidence = if (result.optString("confidence", "low") == "high") Confidence.HIGH else Confidence.LOW
-        )
-    } catch (e: Exception) {
-        throw RecognitionParseException(e)
-    }
-}
