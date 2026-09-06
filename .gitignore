@@ -8,3 +8,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# QA pipeline scratch output (tools/recognize_covers.py, tools/cover_match.py)
+tools/output/
+__pycache__/
