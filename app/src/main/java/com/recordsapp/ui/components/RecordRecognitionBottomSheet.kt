@@ -1,12 +1,15 @@
 package com.recordsapp.ui.components
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +31,7 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.recordsapp.domain.model.Confidence
@@ -84,13 +89,25 @@ fun RecordRecognitionBottomSheet(
             }
 
             is RecognitionState.Result -> {
+                // Candidates the user has already dismissed with "Not right" —
+                // reset whenever a new recognition result comes in.
+                var rejectedUrls by remember(recognitionState.result) { mutableStateOf(setOf<String>()) }
+                val liveCandidates by remember(recognitionState, rejectedUrls) {
+                    derivedStateOf { recognitionState.coverArtUrls.filter { it !in rejectedUrls } }
+                }
+                // null = no manual override yet (follow the AI's pick as candidates
+                // are rejected); a present-but-null url means the user explicitly
+                // chose the camera photo over every cover art candidate.
+                var manualSelection by remember(recognitionState.result) { mutableStateOf<ManualCoverPick?>(null) }
+                val selectedUrl: String? = when (val manual = manualSelection) {
+                    null -> liveCandidates.firstOrNull()?.takeIf { recognitionState.bestCoverIsGoodMatch }
+                    else -> manual.url
+                }
+
                 // null entry = camera photo, string entry = iTunes URL
                 val thumbnails: List<String?> = buildList {
                     if (cameraImageUri != null) add(null)
-                    addAll(recognitionState.coverArtUrls)
-                }
-                var selectedUrl by remember(recognitionState) {
-                    mutableStateOf(recognitionState.coverArtUrls.firstOrNull())
+                    addAll(liveCandidates)
                 }
 
                 Column(
@@ -134,9 +151,95 @@ fun RecordRecognitionBottomSheet(
                     RecognitionField("Year", recognitionState.result.year)
                     RecognitionField("Records", recognitionState.result.numRecords)
 
-                    if (thumbnails.isNotEmpty()) {
+                    if (cameraImageUri != null && recognitionState.coverArtUrls.isNotEmpty()) {
                         Text(
-                            text = "Choose cover art",
+                            text = "Is this the right cover?",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            CoverHeroTile(
+                                label = "Your photo",
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                AsyncImage(
+                                    model = cameraImageUri,
+                                    contentDescription = "Your photo",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxWidth().aspectRatio(1f)
+                                )
+                            }
+                            CoverHeroTile(
+                                label = if (selectedUrl != null) "AI's suggested cover" else "No confident match",
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                if (selectedUrl != null) {
+                                    AsyncImage(
+                                        model = selectedUrl,
+                                        contentDescription = "AI's suggested cover",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxWidth().aspectRatio(1f)
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .aspectRatio(1f)
+                                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            "Using your photo",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                }
+                                if (recognitionState.isRankingCovers) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .aspectRatio(1f)
+                                            .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.45f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(28.dp))
+                                    }
+                                }
+                            }
+                        }
+                        if (selectedUrl != null) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedButton(
+                                    onClick = {
+                                        rejectedUrls = rejectedUrls + selectedUrl
+                                        manualSelection = null
+                                    },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("This isn't right")
+                                }
+                                Button(
+                                    onClick = { onAccept(selectedUrl) },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("Use this cover")
+                                }
+                            }
+                        }
+                    }
+
+                    if (thumbnails.size > 1) {
+                        Text(
+                            text = "Other options",
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -155,7 +258,7 @@ fun RecordRecognitionBottomSheet(
                                             color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                                             shape = RoundedCornerShape(8.dp)
                                         )
-                                        .clickable { selectedUrl = thumbUrl }
+                                        .clickable { manualSelection = ManualCoverPick(thumbUrl) }
                                 )
                             }
                         }
@@ -228,5 +331,33 @@ private fun RecognitionField(label: String, value: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(value.ifBlank { "—" }, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+/**
+ * An explicit user choice in the cover-art hero comparison. Distinct from
+ * "no choice made yet" (represented by a null [ManualCoverPick] reference)
+ * so that deliberately picking the camera photo (`url == null`) isn't
+ * confused with the AI's pick still being followed by default.
+ */
+private data class ManualCoverPick(val url: String?)
+
+@Composable
+private fun CoverHeroTile(
+    label: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Box(modifier = Modifier.clip(RoundedCornerShape(10.dp))) {
+            content()
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.recordsapp.data.local.ImageStorage
 import com.recordsapp.data.local.QaExporter
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
+import com.recordsapp.data.remote.CoverArtMatchService
 import com.recordsapp.data.remote.ItunesCoverArtService
 import com.recordsapp.data.remote.RecognitionApiException
 import com.recordsapp.data.remote.RecognitionService
@@ -30,10 +31,18 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
+/** Candidates beyond this are dropped before the AI comparison call to keep its payload small. */
+private const val MAX_COVER_CANDIDATES = 8
+
 sealed class RecognitionState {
     object Idle : RecognitionState()
     object Loading : RecognitionState()
-    data class Result(val result: RecognitionResult, val coverArtUrls: List<String> = emptyList()) : RecognitionState()
+    data class Result(
+        val result: RecognitionResult,
+        val coverArtUrls: List<String> = emptyList(),
+        val isRankingCovers: Boolean = false,
+        val bestCoverIsGoodMatch: Boolean = true
+    ) : RecognitionState()
     data class Error(val message: String) : RecognitionState()
 }
 
@@ -69,6 +78,7 @@ class AddEditAlbumViewModel @Inject constructor(
     private val imageStorage: ImageStorage,
     private val recognitionService: RecognitionService,
     private val coverArtService: ItunesCoverArtService,
+    private val coverArtMatchService: CoverArtMatchService,
     private val qaExporter: QaExporter
 ) : ViewModel() {
 
@@ -213,10 +223,31 @@ class AddEditAlbumViewModel @Inject constructor(
                 _state.update { it.copy(recognitionState = RecognitionState.Result(result)) }
                 if (result.artistName.isNotBlank() && result.albumName.isNotBlank()) {
                     val urls = coverArtService.fetchUrls(result.artistName, result.albumName)
+                        .take(MAX_COVER_CANDIDATES)
+                    if (urls.isEmpty()) return@launch
                     _state.update { current ->
                         val rs = current.recognitionState
                         if (rs is RecognitionState.Result && rs.result == result) {
-                            current.copy(recognitionState = rs.copy(coverArtUrls = urls))
+                            current.copy(recognitionState = rs.copy(coverArtUrls = urls, isRankingCovers = true))
+                        } else current
+                    }
+                    val ranking = try {
+                        coverArtMatchService.rankCandidates(uri, urls)
+                    } catch (e: Exception) {
+                        null
+                    }
+                    val rankedUrls = ranking?.rankedIndices?.mapNotNull { urls.getOrNull(it) }
+                        ?.ifEmpty { null } ?: urls
+                    _state.update { current ->
+                        val rs = current.recognitionState
+                        if (rs is RecognitionState.Result && rs.result == result) {
+                            current.copy(
+                                recognitionState = rs.copy(
+                                    coverArtUrls = rankedUrls,
+                                    isRankingCovers = false,
+                                    bestCoverIsGoodMatch = ranking?.bestIsGoodMatch ?: true
+                                )
+                            )
                         } else current
                     }
                 }

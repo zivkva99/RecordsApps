@@ -1,8 +1,6 @@
 package com.recordsapp.data.remote
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import com.recordsapp.BuildConfig
@@ -70,19 +68,8 @@ class GeminiRecognitionService @Inject constructor(
         }
     }
 
-    private fun compressImage(uri: Uri): ByteArray {
-        val raw = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: throw IllegalStateException("Cannot open URI: $uri")
-        val bitmap = BitmapFactory.decodeByteArray(raw, 0, raw.size)
-            ?: throw IllegalStateException("Cannot decode image")
-        val scale = minOf(MAX_DIM.toFloat() / bitmap.width, MAX_DIM.toFloat() / bitmap.height, 1f)
-        val scaled = if (scale < 1f)
-            Bitmap.createScaledBitmap(bitmap, (bitmap.width * scale).toInt(), (bitmap.height * scale).toInt(), true)
-        else bitmap
-        val out = java.io.ByteArrayOutputStream()
-        scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
-        return out.toByteArray()
-    }
+    private fun compressImage(uri: Uri): ByteArray =
+        ImageCompression.fromUri(context, uri, MAX_DIM, quality = 85)
 
     companion object {
         private const val MAX_DIM = 1024
