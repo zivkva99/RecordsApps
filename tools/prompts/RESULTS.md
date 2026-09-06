@@ -111,6 +111,73 @@ Caspi, then a Chava Alberstein album across five separate calls with
 different prompt versions. That's the model's visual knowledge running
 out, not an addressable prompt-clarity problem.
 
+## Round 3: script-compliance rate (v13 → v17, shipped)
+
+The user reported seeing the model recognize a Hebrew artist/album
+correctly but still write it in English "on many occasions" — separate
+from overall accuracy (v13's headline number was already good), this is
+specifically about which *script* a correctly-identified Hebrew record
+comes out in.
+
+**A single sample undersamples an intermittent failure.** Measuring
+overall accuracy once suggested this was nearly fixed (1/41 Hebrew
+records affected in the v13 full-corpus run). To get a real rate,
+`tools/script_compliance_eval.py` runs a prompt against
+`tools/eval_data/hebrew_only.json` (the 41 Hebrew ground-truth records)
+**N times each** and reports the fraction of calls where artistName or
+albumName came back in Latin script — independent of whether the specific
+album guess is otherwise right or wrong.
+
+| Prompt | Wrong-script rate | Sample |
+|---|---|---|
+| v13 (baseline) | 3.3% (4/123) | 41 records × 3 |
+| v17 (**shipped**) | 0.5%, then 1.0% on repeat | 41 records × 5, twice |
+| v18 (+ album-fallback rule) | 2.0% (4/205) — worse | 41 records × 5 |
+| v19 (+ narrower album exception) | ~6% (13/205) — much worse | 41 records × 5 |
+
+**What fixed it (v17):** the clearest reproducible case was Esther
+Ofarim's self-titled cover, which literally reads "ESTHER OFARIM" in
+English block capitals (an international pressing) — the model followed
+the cover's printed language 2 of 3 times even though she's Israeli.
+Added an explicit rule: the artist's own language identity wins over one
+specific pressing's printed language, with that exact cover as the named
+example. Confirmed stable across two independent 205-call runs (0.5%,
+then 1.0% — both far below baseline, different specific failures each
+time, consistent with random noise at a low rate rather than a new bug).
+
+**What made it worse (v18, v19):** v18 tried to also stop the model
+substituting an English placeholder title for an unreadable Hebrew one
+(targeting a blank Matti Caspi sleeve) — this didn't help that case and
+somehow made a different record MORE unstable (a new "Pearl Jam - No
+Code" hallucination appeared twice instead of once). v19 tried to carve
+out a narrower exception for albumName specifically (reasoning: a
+genuine foreign-market compilation like Esther & Abi Ofarim's German
+"Die Ofarim-Story" has a real non-Hebrew title, unlike a self-titled
+album that just repeats the artist's name) — this backfired badly: the
+model applied the new "foreign real title" language to self-titled and
+translated-title albums too, and Esther Ofarim's *album* field started
+coming back English 5 of 5 times (worse than before the fix), and Danny
+Sanderson's Hebrew title leaked its English translation "Life Size" 4 of
+5 times. **Lesson: once a targeted fix is working, a second targeted fix
+in the same area is high-risk — verify each one in isolation, and revert
+immediately rather than layering a second attempt on an unconfirmed one.**
+
+**Known accepted trade-off:** v17 still mis-Hebraizes the one genuine
+foreign-title case in the corpus — Esther & Abi Ofarim's German
+compilation "Die Ofarim-Story" comes back as a garbled phonetic Hebrew
+rendering instead of the real German title. Both v18 and v19's attempts
+to fix this specific case made the far more common case (self-titled /
+translated Hebrew albums) meaningfully worse, so this one record is left
+as a known, accepted edge case rather than chasing it further.
+
+Full-corpus accuracy note: a single v17 full-corpus run scored 149/180
+vs v13's 154/180. Diffing the two showed 7 newly-wrong records, of which
+6 were unrelated general noise on already-fragile records (same failure
+pattern seen fluctuating throughout this whole exercise, no script
+involved) and only 1 was the Ofarim German case above. Net: this round
+is a real, targeted fix for a real complaint, at the cost of that one
+known edge case — not a meaningful accuracy regression.
+
 ## Files
 
 - `tools/prompts/current.py` — the shipped prompt (identical to
@@ -121,5 +188,10 @@ out, not an addressable prompt-clarity problem.
 - `tools/eval_prompt.py`, `tools/rescore_eval.py` — the dev-set harness.
 - `tools/full_eval.py` — full-180-corpus harness with the Hebrew/English ×
   artist/album breakdown.
+- `tools/script_compliance_eval.py` — repeated-sampling harness for
+  measuring an intermittent-failure *rate* (script compliance, in this
+  case) rather than a one-shot pass/fail.
 - `tools/eval_data/dev_set.json` — the original 100-record dev set.
 - `tools/eval_data/mistake_diffs.json` — the 50 corrections it was built from.
+- `tools/eval_data/hebrew_only.json` — the 41 Hebrew ground-truth records
+  used by `script_compliance_eval.py`.

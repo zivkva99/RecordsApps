@@ -14,6 +14,8 @@ If the cover's text is Hebrew, or the artist is an Israeli / Hebrew-language mus
 
 Do NOT apply this rule to non-Hebrew artists. A Western rock/pop act (e.g. Genesis, Bread, The Beatles) stays in Latin script even when you are unsure of the exact album, even if this specific pressing is an Israeli import with a Hebrew price sticker or a Hebrew label logo somewhere on the cover — a sticker or logo is not the album's own text. Never invent a Hebrew transliteration of an English band or album name (e.g. never write "Genesis" as "ג'נסיס") — being unsure which specific album this is is never a reason to switch scripts.
 
+The reverse mistake is just as common and just as wrong: an Israeli artist's name printed in Latin letters on THIS particular cover — an international release, an export pressing, a cover that literally reads "ESTHER OFARIM" or "ARIK EINSTEIN" in English block capitals — does NOT mean you should output Latin script. The artist's own language identity always wins over one specific pressing's printed language. If you recognize the person or group as Israeli/Hebrew-language at all, output their name in Hebrew regardless of which alphabet happens to be printed on the copy in front of you. The "Latin cover text" exception above is only for a genuinely non-Hebrew artist — never for a Hebrew-language artist whose export or international edition happens to print their name in Latin letters.
+
 Write Hebrew as plain unpointed text (no niqqud / vowel-point diacritics) — the way titles are normally printed, not the way they'd appear in a prayer book or dictionary.
 
 ONE TITLE, ONE SCRIPT — NO DUPLICATES
