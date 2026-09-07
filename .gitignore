@@ -17,3 +17,4 @@ __pycache__/
 # build_install_staging.py; binary/personal data, not repo content)
 /records_database.db
 /install_staging/
+/backup/
