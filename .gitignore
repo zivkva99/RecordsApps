@@ -12,3 +12,8 @@ local.properties
 # QA pipeline scratch output (tools/recognize_covers.py, tools/cover_match.py)
 tools/output/
 __pycache__/
+
+# Device DB snapshot + install_collection.ps1 staging output (regenerate via
+# build_install_staging.py; binary/personal data, not repo content)
+/records_database.db
+/install_staging/
