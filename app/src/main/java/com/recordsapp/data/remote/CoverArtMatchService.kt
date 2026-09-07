@@ -124,14 +124,18 @@ class CoverArtMatchService @Inject constructor(
         private const val CANDIDATE_MAX_DIM = 500
         private const val PROMPT = """You are comparing a photo of a physical vinyl record cover (the first image) against numbered candidate album-art images found online (the images that follow, each preceded by its "Candidate N:" label).
 
-Identify which candidates show the exact same cover artwork and print edition as the photo — same layout, color scheme, and printed text. A different country's reissue, a different color variant, or a generic "same album" image that doesn't match the specific artwork in the photo is NOT a match.
+Identify which candidates show the same front-cover artwork as the photo: the same photograph/illustration, layout, and title treatment. A later remaster/anniversary/digital reissue that reuses the same front-cover artwork still counts as a match — do not reject it just because it isn't the original vinyl pressing.
+
+Do NOT count as a match: a different photograph or illustration, a different color scheme, a different album entirely (including a tribute/cover-version album by another artist, or a different volume/edition with different content), or a generic "same artist" image that isn't the specific cover shown.
+
+Minor things that do NOT disqualify a match: the photo's lighting/glare/wear, a price sticker or barcode, or a small "remastered"/anniversary badge added on top of the same artwork.
 
 Return ONLY a JSON object:
 {
   "rankedCandidates": [<candidate numbers, best match first, every candidate number listed exactly once>],
   "bestIsGoodMatch": true or false
 }
-"bestIsGoodMatch" must be false unless you are confident the top-ranked candidate is the same print edition shown in the photo."""
+"bestIsGoodMatch" should be true whenever the top-ranked candidate's front-cover artwork clearly matches the photo by the rule above. Only mark it false if none of the candidates are a confident match."""
     }
 }
 

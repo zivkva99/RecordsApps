@@ -32,7 +32,7 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 /** Candidates beyond this are dropped before the AI comparison call to keep its payload small. */
-private const val MAX_COVER_CANDIDATES = 8
+private const val MAX_COVER_CANDIDATES = 10
 
 sealed class RecognitionState {
     object Idle : RecognitionState()
