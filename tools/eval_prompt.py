@@ -13,6 +13,10 @@ Usage: python tools/eval_prompt.py tools/prompts/current.py
   Scores with exact-normalized matching; use rescore_eval.py afterward
   for a punctuation/format-tolerant rescore (Gemini's own output varies
   run to run even for an identical prompt on a hard cover).
+  Env vars: GEMINI_MODEL (default gemini-2.5-flash) to point at a
+  different model — e.g. GEMINI_MODEL=gemini-3.1-pro-preview — for a
+  same-prompt model comparison; MAX_WORKERS (default 8, see full_eval.py)
+  to reduce concurrency for a model with a tighter rate limit.
 """
 import base64
 import importlib.util
@@ -21,6 +25,7 @@ import json
 import os
 import re
 import sys
+import time
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from difflib import SequenceMatcher
@@ -38,7 +43,8 @@ os.makedirs(SCRATCH, exist_ok=True)
 with open(os.path.join(REPO, "local.properties"), "r", encoding="utf-8") as f:
     API_KEY = next(l.split("=", 1)[1].strip() for l in f if l.strip().startswith("gemini_api_key"))
 
-GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={API_KEY}"
 MAX_DIM = 1024
 session = requests.Session()
 
@@ -64,10 +70,14 @@ def recognize_one(filename, prompt_text):
         ]}],
         "generationConfig": {"thinkingConfig": {"thinkingBudget": 8000}},
     }
+    last_err = "no attempts made"
     for attempt in range(3):
         try:
             resp = session.post(GEMINI_URL, json=payload, timeout=60)
             if resp.status_code != 200:
+                last_err = f"HTTP {resp.status_code}: {resp.text[:300]}"
+                if resp.status_code == 429:
+                    time.sleep(5 * (attempt + 1))
                 continue
             data = resp.json()
             parts = data["candidates"][0]["content"]["parts"]

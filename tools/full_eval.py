@@ -5,6 +5,9 @@ breakdown: English-artist-wrong / Hebrew-artist-wrong / English-album-wrong
 / Hebrew-album-wrong, using the lenient (format-tolerant) matcher.
 
 Usage: python full_eval.py prompts/vN.py [output_tag]
+Env vars: GEMINI_MODEL (default gemini-2.5-flash), MAX_WORKERS (default 8
+— lower this for a model with a tighter rate limit, e.g. a preview Pro
+model; see eval_prompt.py).
 """
 import json
 import os
@@ -65,7 +68,8 @@ def main():
     print(f"Evaluating {tag} on {len(dev_set)} records (full corpus)...")
 
     results = {}
-    with ThreadPoolExecutor(max_workers=8) as ex:
+    max_workers = int(os.environ.get("MAX_WORKERS", "8"))
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(recognize_one, item["filename"], prompt_text): item for item in dev_set}
         done = 0
         for fut in as_completed(futures):

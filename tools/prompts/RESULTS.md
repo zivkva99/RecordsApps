@@ -178,6 +178,41 @@ involved) and only 1 was the Ofarim German case above. Net: this round
 is a real, targeted fix for a real complaint, at the cost of that one
 known edge case — not a meaningful accuracy regression.
 
+## Round 4: same prompt, better model (reference only — not shipped)
+
+Everything above tuned the *prompt* against a fixed model
+(`gemini-2.5-flash`). The remaining ~25/180 misses were characterized
+throughout as a model-knowledge ceiling, not a prompt-clarity problem —
+e.g. a text-free "Layla" painting cover that hallucinated 5 different
+wrong artists across every flash prompt version tried. To test that
+claim directly: same v17 prompt, unchanged, against
+`gemini-3.1-pro-preview` instead of `gemini-2.5-flash`.
+
+| Model | Full corpus (/180) | Hebrew album wrong | English album wrong |
+|---|---|---|---|
+| gemini-2.5-flash (shipped) | 149-154/180 (82.8-85.6%) | 13-17/41 | 10-13/139 |
+| gemini-3.1-pro-preview | **170/180 (94.4%)** | **3/41** | 2/139 |
+
+Confirms the hypothesis: Hebrew album identification — the dominant
+failure category all along — dropped from 13-17 wrong to 3, and the
+"Layla" cover above identified correctly. Several of the 10 still wrong
+are defensible near-misses rather than hallucinations (Ariel Zilber and
+Matti Caspi both got a real self-titled album by the *correct* artist,
+just not the specific one; Roxy Music got a different real Roxy Music
+album). Script compliance held: every misidentified Hebrew record still
+came back in correct Hebrew script.
+
+**Not shipped, by user decision** (2026-09): `gemini-3.1-pro-preview` is
+a preview model (no long-term API stability guarantee) with paid-only
+pricing (~$2/1M input, ~$12/1M output tokens — Pro-tier models left
+Google's free tier entirely as of April 2026), noticeably higher latency,
+and a much tighter rate limit (`full_eval.py` needed `MAX_WORKERS=3` and
+a 429-backoff fix to complete without crashing, vs. flash's default 8).
+`gemini-2.5-flash` remains free and is what's shipped; this section is a
+reference for revisiting later if a GA, cheaper high-end model becomes
+available, or if occasional-use cost stops being a concern. To reproduce:
+`GEMINI_MODEL=gemini-3.1-pro-preview MAX_WORKERS=3 python tools/full_eval.py tools/prompts/current.py <tag>`.
+
 ## Files
 
 - `tools/prompts/current.py` — the shipped prompt (identical to
