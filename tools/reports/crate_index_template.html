@@ -1,0 +1,791 @@
+<title>Crate Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #eae5d9;
+    --surface: #f7f4ec;
+    --surface-2: #ddd6c4;
+    --ink: #211d16;
+    --ink-soft: #6b6353;
+    --ink-faint: #948c78;
+    --border: rgba(33, 29, 22, 0.14);
+    --border-strong: rgba(33, 29, 22, 0.28);
+    --accent: #a67420;
+    --accent-ink: #fffaf0;
+    --high: #3f7d57;
+    --high-bg: rgba(63, 125, 87, 0.13);
+    --low: #b23a2f;
+    --low-bg: rgba(178, 58, 47, 0.13);
+    --shadow: 0 1px 2px rgba(33, 29, 22, 0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151209;
+      --surface: #1f1b12;
+      --surface-2: #2a251a;
+      --ink: #ece5d3;
+      --ink-soft: #b3a992;
+      --ink-faint: #7d7562;
+      --border: rgba(236, 229, 211, 0.14);
+      --border-strong: rgba(236, 229, 211, 0.26);
+      --accent: #e3af52;
+      --accent-ink: #201704;
+      --high: #5fbe85;
+      --high-bg: rgba(95, 190, 133, 0.14);
+      --low: #e2725a;
+      --low-bg: rgba(226, 114, 90, 0.16);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #151209;
+    --surface: #1f1b12;
+    --surface-2: #2a251a;
+    --ink: #ece5d3;
+    --ink-soft: #b3a992;
+    --ink-faint: #7d7562;
+    --border: rgba(236, 229, 211, 0.14);
+    --border-strong: rgba(236, 229, 211, 0.26);
+    --accent: #e3af52;
+    --accent-ink: #201704;
+    --high: #5fbe85;
+    --high-bg: rgba(95, 190, 133, 0.14);
+    --low: #e2725a;
+    --low-bg: rgba(226, 114, 90, 0.16);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); }
+
+  .wrap {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 2.75rem 1.75rem 5rem;
+  }
+
+  header.masthead {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem 2.5rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border-strong);
+    margin-bottom: 1.75rem;
+  }
+
+  .masthead-text .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4vw, 3rem);
+    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+
+  .masthead-text p {
+    max-width: 52ch;
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.65rem 1.05rem;
+    min-width: 100px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-tile .n {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-tile .n.high { color: var(--high); }
+  .stat-tile .n.low { color: var(--low); }
+
+  .stat-tile .l {
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-faint);
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .toolbar {
+    background: var(--bg);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.9rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search {
+    flex: 1 1 220px;
+    position: relative;
+  }
+
+  .search input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 0.55rem 0.8rem 0.55rem 2.1rem;
+    color: var(--ink);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.92rem;
+  }
+
+  .search input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .search::before {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 50%;
+    transform: translateY(-60%);
+  }
+
+  .search::after {
+    content: "";
+    position: absolute;
+    left: 1.28rem;
+    top: 58%;
+    width: 5px;
+    height: 1.5px;
+    background: var(--ink-faint);
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .chip {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .chip:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  select#sort {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 0.5rem 0.7rem;
+    color: var(--ink);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.88rem;
+  }
+
+  .count-line {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    margin: 0.6rem 0 1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+
+  table.ledger {
+    width: 100%;
+    min-width: 880px;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  table.ledger thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    font-family: "IBM Plex Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.66rem;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--border-strong);
+    z-index: 3;
+  }
+
+  table.ledger tbody tr { border-bottom: 1px solid var(--border); }
+  table.ledger tbody tr:hover { background: color-mix(in srgb, var(--surface-2) 35%, transparent); }
+
+  table.ledger td {
+    padding: 0.6rem 0.7rem;
+    vertical-align: top;
+  }
+
+  td.col-photo, td.col-cover { width: 108px; }
+
+  .thumb-sq {
+    width: 82px;
+    height: 82px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    background: var(--surface-2);
+  }
+
+  .fname-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.58rem;
+    color: var(--ink-faint);
+    opacity: 0.7;
+    margin-top: 0.3rem;
+    max-width: 82px;
+    word-break: break-all;
+    line-height: 1.2;
+  }
+
+  .info-block { min-width: 190px; position: relative; }
+  .info-block .artist { font-weight: 600; font-size: 0.86rem; line-height: 1.25; }
+  .info-block .album {
+    font-family: "Fraunces", Georgia, serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    line-height: 1.3;
+    margin: 0.1rem 0 0.25rem;
+  }
+  .info-block .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .info-block.updated .changed { color: var(--accent); font-weight: 700; }
+
+  .pill {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.16rem 0.45rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .pill.high { background: var(--high-bg); color: var(--high); }
+  .pill.low { background: var(--low-bg); color: var(--low); }
+  .pill.edited { background: rgba(166, 116, 32, 0.15); color: var(--accent); }
+  .pill.aipick { background: rgba(166, 116, 32, 0.85); color: #fffaf0; }
+  .pill.lowmatch { background: rgba(178, 58, 47, 0.85); color: #fffaf0; }
+  .pill.confirmed { background: rgba(63, 125, 87, 0.9); color: #fffaf0; }
+  .pill.alt { background: rgba(107, 99, 83, 0.85); color: #fffaf0; }
+  .pill.pending { background: var(--low-bg); color: var(--low); }
+
+  .edit-btn {
+    position: absolute;
+    top: -0.2rem;
+    right: -0.2rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+  tr:hover .edit-btn, .edit-btn:focus-visible { opacity: 1; }
+
+  .edit-form { display: flex; flex-direction: column; gap: 0.35rem; min-width: 200px; }
+  .edit-form label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 0.12rem;
+  }
+  .edit-form input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 0.3rem 0.45rem;
+    color: var(--ink);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 0.82rem;
+  }
+  .edit-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+  .edit-actions { display: flex; gap: 0.35rem; margin-top: 0.1rem; }
+  .edit-actions button {
+    flex: 1;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    padding: 0.32rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+  }
+  .edit-actions .save { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .edit-actions .cancel { background: var(--surface); color: var(--ink-soft); }
+
+  .cover-cell .tile {
+    position: relative;
+    width: 82px;
+    height: 82px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+  .cover-cell .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover-cell .tile .pill { position: absolute; top: 0.2rem; left: 0.2rem; font-size: 0.52rem; padding: 0.1rem 0.32rem; }
+
+  .cover-actions-mini { display: flex; gap: 0.3rem; margin-top: 0.35rem; }
+  .cover-actions-mini button {
+    flex: 1;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.6rem;
+    padding: 0.22rem 0.1rem;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .cover-actions-mini button:hover:not(:disabled) { background: var(--surface-2); color: var(--ink); }
+  .cover-actions-mini button:disabled { opacity: 0.35; cursor: default; }
+  .cover-actions-mini button.confirm-active { color: var(--high); font-weight: 600; border-color: var(--high); }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--ink-faint);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.85rem;
+  }
+
+  footer.note {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+    max-width: 70ch;
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="masthead-text">
+      <p class="eyebrow">Gemini 2.5 Flash · recognition + cover match, as a ledger</p>
+      <h1>The Crate Index</h1>
+      <p>One row per record: the photo taken, what the AI first read off the cover, what it reads today after correction, and which picture — your photo or an iTunes match — you confirmed to show. Amber text marks a field that changed.</p>
+    </div>
+    <div class="stat-row" id="statRow"></div>
+  </header>
+
+  <div class="toolbar">
+    <div class="search">
+      <input type="text" id="searchInput" placeholder="Search artist, album, or filename…" autocomplete="off">
+    </div>
+    <div class="chips" id="chipRow"></div>
+    <select id="sort" aria-label="Sort order">
+      <option value="artist">Artist A–Z</option>
+      <option value="album">Album A–Z</option>
+      <option value="year-asc">Year, oldest first</option>
+      <option value="year-desc">Year, newest first</option>
+      <option value="filename">Scan order</option>
+    </select>
+  </div>
+
+  <p class="count-line" id="countLine"></p>
+
+  <div class="table-wrap">
+    <table class="ledger">
+      <thead>
+        <tr>
+          <th>Photo taken</th>
+          <th>Received by AI</th>
+          <th>Updated by you</th>
+          <th>Cover shown</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="empty-state" id="emptyState" hidden>No covers match that search.</div>
+
+  <footer class="note">
+    "Received by AI" is Gemini's first, uncorrected read of each photo. "Updated by you" is today's saved value — Hebrew names and mistaken titles corrected, either by hand here or by editing the field directly (amber = changed from the original read). "Cover shown" is whichever picture you confirmed in the cover-match review: your own photo, or the matching iTunes artwork. Click a pencil to edit a field; use ✕ / ✓ under a cover to change or lock in your pick — everything saves here.
+  </footer>
+</div>
+
+<script>
+  const BASE_RECORDS = __DATA_JSON__;
+  const BY_FILENAME = Object.fromEntries(BASE_RECORDS.map(r => [r.filename, r]));
+  let overrides = {};      // filename -> {artistName, albumName, year, numRecords, editedAt}
+  let coverChoices = {};   // filename -> {pick: 'photo'|0..3, confirmed, decidedAt}
+  let editingFile = null;
+  let dbApi = null;
+
+  const tbody = document.getElementById('tbody');
+  const statRow = document.getElementById('statRow');
+  const chipRow = document.getElementById('chipRow');
+  const countLine = document.getElementById('countLine');
+  const emptyState = document.getElementById('emptyState');
+  const searchInput = document.getElementById('searchInput');
+  const sortSelect = document.getElementById('sort');
+
+  const total = BASE_RECORDS.length;
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function effectiveUpdated(r) {
+    const o = overrides[r.filename];
+    if (!o) return { ...r.updated, edited: false };
+    return { artistName: o.artistName, albumName: o.albumName, year: o.year, numRecords: o.numRecords, confidence: r.updated.confidence, edited: true };
+  }
+
+  function defaultCoverState(r) {
+    if (r.chosenSource === 'itunes') {
+      const idx = (r.coverCandidates || []).indexOf(r.chosenThumb);
+      return { pick: idx >= 0 ? idx : 'photo', confirmed: true };
+    }
+    if (r.chosenSource === 'photo') {
+      return { pick: 'photo', confirmed: true };
+    }
+    const hasGood = r.coverBestIsGoodMatch && (r.coverCandidates || []).length > 0;
+    return { pick: hasGood ? 0 : 'photo', confirmed: false };
+  }
+
+  function coverState(r) {
+    return coverChoices[r.filename] || defaultCoverState(r);
+  }
+
+  function pickThumb(r, pick) {
+    return pick === 'photo' ? r.photoThumb : r.coverCandidates[pick];
+  }
+
+  function matches(r, updated, q) {
+    if (!q) return true;
+    const hay = `${updated.artistName} ${updated.albumName} ${r.filename}`.toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }
+
+  function sortRecords(list, mode) {
+    const arr = [...list];
+    switch (mode) {
+      case 'album': arr.sort((a, b) => a._u.albumName.localeCompare(b._u.albumName)); break;
+      case 'year-asc': arr.sort((a, b) => (parseInt(a._u.year) || 9999) - (parseInt(b._u.year) || 9999)); break;
+      case 'year-desc': arr.sort((a, b) => (parseInt(b._u.year) || -1) - (parseInt(a._u.year) || -1)); break;
+      case 'filename': arr.sort((a, b) => a.filename.localeCompare(b.filename)); break;
+      default: arr.sort((a, b) => a._u.artistName.localeCompare(b._u.artistName));
+    }
+    return arr;
+  }
+
+  function infoBlock(fields, cls, diffAgainst) {
+    const line = (key, val) => {
+      const changed = diffAgainst && String(diffAgainst[key] ?? '').trim() !== String(val ?? '').trim();
+      return changed ? `<span class="changed">${escapeHtml(val || '—')}</span>` : escapeHtml(val || '—');
+    };
+    return `
+      <div class="artist" dir="auto">${line('artistName', fields.artistName)}</div>
+      <div class="album" dir="auto">${line('albumName', fields.albumName)}</div>
+      <div class="meta">
+        <span>${line('year', fields.year)} · ${escapeHtml(fields.numRecords || '1')}×LP</span>
+        <span class="pill ${fields.confidence === 'high' ? 'high' : 'low'}">${fields.confidence === 'high' ? 'High' : 'Review'}</span>
+      </div>
+    `;
+  }
+
+  function editFormHtml(r, updated) {
+    return `
+      <form class="edit-form" data-filename="${escapeHtml(r.filename)}">
+        <div>
+          <label>Artist</label>
+          <input type="text" name="artistName" dir="auto" value="${escapeHtml(updated.artistName || '')}">
+        </div>
+        <div>
+          <label>Album</label>
+          <input type="text" name="albumName" dir="auto" value="${escapeHtml(updated.albumName || '')}">
+        </div>
+        <div class="row2">
+          <div><label>Year</label><input type="text" name="year" inputmode="numeric" value="${escapeHtml(updated.year || '')}"></div>
+          <div><label>Records</label><input type="text" name="numRecords" value="${escapeHtml(updated.numRecords || '1')}"></div>
+        </div>
+        <div class="edit-actions">
+          <button type="button" class="cancel" data-action="cancel">Cancel</button>
+          <button type="submit" class="save">Save</button>
+        </div>
+      </form>
+    `;
+  }
+
+  function coverCellHtml(r) {
+    const state = coverState(r);
+    const thumb = pickThumb(r, state.pick);
+    const candidateCount = (r.coverCandidates || []).length;
+
+    let badge = '';
+    if (state.confirmed) badge = `<span class="pill confirmed">Confirmed</span>`;
+    else if (state.pick === 0) badge = r.coverBestIsGoodMatch
+      ? `<span class="pill aipick">AI pick</span>`
+      : `<span class="pill lowmatch">Low confidence</span>`;
+    else if (typeof state.pick === 'number') badge = `<span class="pill alt">Option ${state.pick + 1}</span>`;
+    else if (!state.confirmed) badge = `<span class="pill pending">Pending</span>`;
+
+    const canReject = typeof state.pick === 'number';
+
+    return `
+      <div class="cover-cell" data-filename="${escapeHtml(r.filename)}">
+        <div class="tile"><img src="${thumb}" alt="Chosen cover" loading="lazy">${badge}</div>
+        <div class="cover-actions-mini">
+          <button type="button" data-action="cover-reject" data-filename="${escapeHtml(r.filename)}" ${canReject ? '' : 'disabled'} title="Not right — try next">✕</button>
+          <button type="button" data-action="cover-confirm" data-filename="${escapeHtml(r.filename)}" class="${state.confirmed ? 'confirm-active' : ''}" title="Confirm this picture">✓</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function render() {
+    const rows = BASE_RECORDS.map(r => {
+      const updated = effectiveUpdated(r);
+      return { ...r, _u: updated };
+    });
+
+    const editedCount = rows.filter(r => r._u.edited || r.updated.artistName !== r.received.artistName || r.updated.albumName !== r.received.albumName).length;
+    const itunesCount = rows.filter(r => typeof coverState(r).pick === 'number').length;
+    const photoCount = total - itunesCount;
+    const pendingCount = rows.filter(r => !coverState(r).confirmed).length;
+
+    statRow.innerHTML = `
+      <div class="stat-tile"><span class="n">${total}</span><span class="l">Records</span></div>
+      <div class="stat-tile"><span class="n high">${editedCount}</span><span class="l">Text corrected</span></div>
+      <div class="stat-tile"><span class="n">${itunesCount}</span><span class="l">iTunes cover</span></div>
+      <div class="stat-tile"><span class="n">${photoCount}</span><span class="l">Own photo</span></div>
+      ${pendingCount ? `<div class="stat-tile"><span class="n low">${pendingCount}</span><span class="l">Cover pending</span></div>` : ''}
+    `;
+
+    if (!chipRow.dataset.built) {
+      const chips = [
+        { key: 'all', label: 'All' },
+        { key: 'corrected', label: 'Text corrected' },
+        { key: 'itunes', label: 'Cover: iTunes' },
+        { key: 'photo', label: 'Cover: own photo' },
+        { key: 'pending', label: 'Cover pending' },
+      ];
+      chipRow.innerHTML = chips.map(c =>
+        `<button class="chip" data-key="${c.key}" aria-pressed="${c.key === 'all'}">${c.label}</button>`
+      ).join('');
+      chipRow.dataset.built = '1';
+      chipRow.dataset.active = 'all';
+      chipRow.addEventListener('click', (e) => {
+        const btn = e.target.closest('.chip');
+        if (!btn) return;
+        chipRow.dataset.active = btn.dataset.key;
+        [...chipRow.children].forEach(c => c.setAttribute('aria-pressed', String(c === btn)));
+        render();
+      });
+    }
+    const activeChip = chipRow.dataset.active || 'all';
+    const labels = { all: 'All', corrected: 'Text corrected', itunes: 'Cover: iTunes', photo: 'Cover: own photo', pending: 'Cover pending' };
+    [...chipRow.children].forEach(c => {
+      const key = c.dataset.key;
+      const count = key === 'all' ? total : key === 'corrected' ? editedCount : key === 'itunes' ? itunesCount : key === 'photo' ? photoCount : pendingCount;
+      c.textContent = `${labels[key]} (${count})`;
+    });
+
+    const q = searchInput.value.trim();
+    let list = rows.filter(r => matches(r, r._u, q));
+    if (activeChip === 'corrected') list = list.filter(r => r._u.edited || r.updated.artistName !== r.received.artistName || r.updated.albumName !== r.received.albumName);
+    if (activeChip === 'itunes') list = list.filter(r => typeof coverState(r).pick === 'number');
+    if (activeChip === 'photo') list = list.filter(r => coverState(r).pick === 'photo');
+    if (activeChip === 'pending') list = list.filter(r => !coverState(r).confirmed);
+    list = sortRecords(list, sortSelect.value);
+
+    countLine.textContent = `Showing ${list.length} of ${total}`;
+    emptyState.hidden = list.length !== 0;
+
+    tbody.innerHTML = list.map(r => `
+      <tr data-filename="${escapeHtml(r.filename)}">
+        <td class="col-photo">
+          <img class="thumb-sq" src="${r.photoThumb}" alt="Photo of ${escapeHtml(r._u.albumName || 'record')}" loading="lazy">
+          <div class="fname-tag">${escapeHtml(r.filename)}</div>
+        </td>
+        <td>
+          <div class="info-block">${infoBlock(r.received, 'received')}</div>
+        </td>
+        <td>
+          <div class="info-block updated">
+            ${editingFile === r.filename ? editFormHtml(r, r._u) : infoBlock(r._u, 'updated', r.received)}
+            ${editingFile === r.filename ? '' : `<button class="edit-btn" type="button" data-action="edit" data-filename="${escapeHtml(r.filename)}" aria-label="Edit this entry" title="Edit">✎</button>`}
+          </div>
+        </td>
+        <td class="col-cover">${coverCellHtml(r)}</td>
+      </tr>
+    `).join('');
+  }
+
+  async function saveCoverChoice(filename, state) {
+    coverChoices[filename] = state;
+    render();
+    if (!dbApi) return;
+    try {
+      await dbApi.collection('coverChoices').doc(filename).set({
+        index: state.pick === 'photo' ? -1 : state.pick,
+        confirmed: state.confirmed,
+        decidedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('Failed to save cover choice', err);
+    }
+  }
+
+  tbody.addEventListener('click', (e) => {
+    const editBtn = e.target.closest('[data-action="edit"]');
+    if (editBtn) { editingFile = editBtn.dataset.filename; render(); return; }
+
+    const cancelBtn = e.target.closest('[data-action="cancel"]');
+    if (cancelBtn) { editingFile = null; render(); return; }
+
+    const rejectBtn = e.target.closest('[data-action="cover-reject"]');
+    if (rejectBtn) {
+      const r = BY_FILENAME[rejectBtn.dataset.filename];
+      if (!r) return;
+      const current = coverState(r);
+      if (typeof current.pick !== 'number') return;
+      const next = current.pick + 1;
+      saveCoverChoice(r.filename, {
+        pick: next < (r.coverCandidates || []).length ? next : 'photo',
+        confirmed: false
+      });
+      return;
+    }
+
+    const confirmBtn = e.target.closest('[data-action="cover-confirm"]');
+    if (confirmBtn) {
+      const r = BY_FILENAME[confirmBtn.dataset.filename];
+      if (!r) return;
+      const current = coverState(r);
+      saveCoverChoice(r.filename, { pick: current.pick, confirmed: true });
+    }
+  });
+
+  tbody.addEventListener('submit', async (e) => {
+    const form = e.target.closest('.edit-form');
+    if (!form) return;
+    e.preventDefault();
+    const filename = form.dataset.filename;
+    const fd = new FormData(form);
+    const data = {
+      artistName: (fd.get('artistName') || '').toString().trim(),
+      albumName: (fd.get('albumName') || '').toString().trim(),
+      year: (fd.get('year') || '').toString().trim(),
+      numRecords: (fd.get('numRecords') || '1').toString().trim(),
+      editedAt: new Date().toISOString(),
+    };
+    overrides[filename] = data;
+    editingFile = null;
+    render();
+    if (dbApi) {
+      try { await dbApi.collection('edits').doc(filename).set(data); }
+      catch (err) { console.error('Failed to save edit', err); }
+    }
+  });
+
+  searchInput.addEventListener('input', render);
+  sortSelect.addEventListener('change', render);
+  render();
+
+  (async () => {
+    if (!window.claude || !window.claude.use) return;
+    try {
+      const db = await window.claude.use('db');
+      if (!db) return;
+      dbApi = db;
+      db.collection('edits').onSnapshot((snap) => {
+        const next = {};
+        snap.docs.forEach(doc => { if (doc.exists) next[doc.id] = doc.data(); });
+        overrides = next;
+        render();
+      }, (err) => console.error('edits subscription error', err));
+      db.collection('coverChoices').onSnapshot((snap) => {
+        const next = {};
+        snap.docs.forEach(doc => {
+          if (!doc.exists) return;
+          const d = doc.data();
+          next[doc.id] = { pick: d.index === -1 ? 'photo' : d.index, confirmed: !!d.confirmed };
+        });
+        coverChoices = next;
+        render();
+      }, (err) => console.error('coverChoices subscription error', err));
+    } catch (err) {
+      console.error('db capability unavailable', err);
+    }
+  })();
+</script>
