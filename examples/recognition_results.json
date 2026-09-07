@@ -1190,7 +1190,7 @@
     "error": null,
     "artistName": "Genesis",
     "albumName": "Genesis",
-    "year": "1986",
+    "year": "1983",
     "numRecords": "1",
     "confidence": "high",
     "coverChoice": {
@@ -1422,7 +1422,7 @@
   {
     "filename": "20260906_102114.jpg",
     "error": null,
-    "artistName": "The Moody Blues",
+    "artistName": "Procol Harum",
     "albumName": "In Concert with the Edmonton Symphony Orchestra",
     "year": "1993",
     "numRecords": "2",
