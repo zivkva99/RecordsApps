@@ -518,8 +518,15 @@
     if (r.chosenSource === 'photo') {
       return { pick: 'photo', confirmed: true };
     }
-    const hasGood = r.coverBestIsGoodMatch && (r.coverCandidates || []).length > 0;
-    return { pick: hasGood ? 0 : 'photo', confirmed: false };
+    // Default to the top-ranked candidate whenever one exists, rather than
+    // gating it on coverBestIsGoodMatch -- that self-assessed flag has
+    // proven unreliable enough (measured: it rejects plainly-correct
+    // matches often) that hiding the candidate behind it hid the right
+    // cover far more often than it protected against a wrong one. The ✕/✓
+    // controls still let you flip through every candidate or fall back to
+    // the photo yourself.
+    const hasCandidates = (r.coverCandidates || []).length > 0;
+    return { pick: hasCandidates ? 0 : 'photo', confirmed: false };
   }
 
   function coverState(r) {

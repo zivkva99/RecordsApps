@@ -99,8 +99,15 @@ fun RecordRecognitionBottomSheet(
                 // are rejected); a present-but-null url means the user explicitly
                 // chose the camera photo over every cover art candidate.
                 var manualSelection by remember(recognitionState.result) { mutableStateOf<ManualCoverPick?>(null) }
+                // Always default to the top-ranked candidate when one exists, rather
+                // than gating it on bestCoverIsGoodMatch -- that self-assessed flag
+                // has proven too unreliable (measured: it rejects plainly-correct
+                // matches often enough that hiding the candidate behind it hid the
+                // right cover more often than it protected against a wrong one).
+                // "Other options" below still lets the user flip through every
+                // candidate or fall back to their own photo regardless.
                 val selectedUrl: String? = when (val manual = manualSelection) {
-                    null -> liveCandidates.firstOrNull()?.takeIf { recognitionState.bestCoverIsGoodMatch }
+                    null -> liveCandidates.firstOrNull()
                     else -> manual.url
                 }
 
@@ -173,7 +180,12 @@ fun RecordRecognitionBottomSheet(
                                 )
                             }
                             CoverHeroTile(
-                                label = if (selectedUrl != null) "AI's suggested cover" else "No confident match",
+                                label = when {
+                                    selectedUrl == null -> "No cover art found"
+                                    manualSelection != null -> "Selected cover"
+                                    recognitionState.bestCoverIsGoodMatch -> "AI's suggested cover"
+                                    else -> "Possible cover — please check"
+                                },
                                 modifier = Modifier.weight(1f)
                             ) {
                                 if (selectedUrl != null) {
