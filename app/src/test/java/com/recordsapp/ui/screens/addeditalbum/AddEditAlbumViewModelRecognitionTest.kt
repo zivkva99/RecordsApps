@@ -6,6 +6,7 @@ import com.recordsapp.data.local.ImageStorage
 import com.recordsapp.data.local.QaExporter
 import com.recordsapp.data.remote.CoverArtMatchService
 import com.recordsapp.data.remote.CoverMatchResult
+import com.recordsapp.data.remote.DiscogsCoverArtService
 import com.recordsapp.data.remote.ItunesCoverArtService
 import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
@@ -37,6 +38,7 @@ class AddEditAlbumViewModelRecognitionTest {
     private val repository = mockk<AlbumRepository>(relaxed = true)
     private val imageStorage = mockk<ImageStorage>(relaxed = true)
     private val coverArtService = mockk<ItunesCoverArtService>(relaxed = true)
+    private val discogsCoverArtService = mockk<DiscogsCoverArtService>(relaxed = true)
     private val coverArtMatchService = mockk<CoverArtMatchService>(relaxed = true)
     private val qaExporter = mockk<QaExporter>(relaxed = true)
     private val uri = mockk<Uri>()
@@ -57,6 +59,7 @@ class AddEditAlbumViewModelRecognitionTest {
         imageStorage = imageStorage,
         recognitionService = fakeService,
         coverArtService = coverArtService,
+        discogsCoverArtService = discogsCoverArtService,
         coverArtMatchService = coverArtMatchService,
         qaExporter = qaExporter
     )

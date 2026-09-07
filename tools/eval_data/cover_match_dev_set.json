@@ -1,0 +1,1123 @@
+[
+  {
+    "filename": "20260906_094953.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "כמו צמח בר",
+    "year": "1975",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/bc/13/c7/bc13c7c3-4a03-893d-a942-a6449cbaa370/7290116161921.png/600x600bb.jpg",
+      "path": "covers/20260906_094953.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095022.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "לונדון",
+    "year": "1989",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/ca/b5/c4/cab5c43c-d0fd-e163-3f1b-e97e7e46f484/7290116161716.png/600x600bb.jpg",
+      "path": "covers/20260906_095022.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095027.jpg",
+    "error": null,
+    "artistName": "גזוז",
+    "albumName": "גזוז",
+    "year": "1979",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/28/ea/c2/28eac2cc-b64b-9c56-d73d-d7b44f5eea83/7290115397116.png/600x600bb.jpg",
+      "path": "covers/20260906_095027.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095829.jpg",
+    "error": null,
+    "artistName": "להקת הזמר של קיבוץ העוגן",
+    "albumName": "צבע אחר",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_100456.jpg",
+    "error": null,
+    "artistName": "יוסי בנאי",
+    "albumName": "יוסי בנאי",
+    "year": "1979",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/42/82/47/42824722-4688-f56b-6aba-7ef387347bc2/7290116166131.png/600x600bb.jpg",
+      "path": "covers/20260906_100456.jpg"
+    }
+  },
+  {
+    "filename": "20260906_100501.jpg",
+    "error": null,
+    "artistName": "נעמי שמר",
+    "albumName": "על הדבש ועל העוקץ",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ec/82/1e/ec821ef0-2cbd-b8f1-1519-ebcbeb0a7462/7290116161907.png/600x600bb.jpg",
+      "path": "covers/20260906_100501.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101003.jpg",
+    "error": null,
+    "artistName": "אילנית",
+    "albumName": "ארבעה צדדים",
+    "year": "1974",
+    "numRecords": "2",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101010.jpg",
+    "error": null,
+    "artistName": "אריאל זילבר",
+    "albumName": "אריאל זילבר",
+    "year": "1983",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101012.jpg",
+    "error": null,
+    "artistName": "דוד ברוזה",
+    "albumName": "ברוזה",
+    "year": "1980",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101015.jpg",
+    "error": null,
+    "artistName": "הגבעטרון",
+    "albumName": "גוונים",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music111/v4/a1/75/87/a1758718-7b1c-fbe0-95ed-bfec000282b7/cover.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101015.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101017.jpg",
+    "error": null,
+    "artistName": "אריק סיני",
+    "albumName": "שירים חוזרים",
+    "year": "1990",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/66/fe/b7/66feb765-9277-8815-8782-465599b93037/7290116162348.png/600x600bb.jpg",
+      "path": "covers/20260906_101017.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101020.jpg",
+    "error": null,
+    "artistName": "דוד ברוזה",
+    "albumName": "האשה שאתי",
+    "year": "1983",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/25/c0/1b/25c01b1c-1bb6-8d7d-93f7-3e7acc3ad2d8/7290116165295.png/600x600bb.jpg",
+      "path": "covers/20260906_101020.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101023.jpg",
+    "error": null,
+    "artistName": "הכל עובר חביבי",
+    "albumName": "עודני ילד",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music4/v4/d2/f0/20/d2f0209e-f35d-97fa-69fa-276b5bf5e93d/asset.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101023.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101026.jpg",
+    "error": null,
+    "artistName": "שושנה דמארי",
+    "albumName": "אור",
+    "year": "1988",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/56/35/6e/56356ebd-8ef7-d93a-777f-c4089a189fdd/asset.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101026.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101029.jpg",
+    "error": null,
+    "artistName": "יוסי בנאי",
+    "albumName": "אני וסימון ומואיז הקטן",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/6c/11/05/6c11051e-f9e9-fa2a-271a-74223d8f772e/7293200438596.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101029.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101032.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "הלילה הוא שירים",
+    "year": "1977",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f6/2f/b3/f62fb3e7-82a2-8d14-ec34-512fa90d189d/7290116164359.png/600x600bb.jpg",
+      "path": "covers/20260906_101032.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101035.jpg",
+    "error": null,
+    "artistName": "דני סנדרסון",
+    "albumName": "חיים בגודל טבעי",
+    "year": "1982",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101038.jpg",
+    "error": null,
+    "artistName": "שלמה גרוניך",
+    "albumName": "למה לא סיפרת לי",
+    "year": "1971",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/c9/60/b9/c960b971-c86b-ee4d-69e5-99ee723aed6a/ShlomoGronich_LamaLoSipartaLi660X660.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101038.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101041.jpg",
+    "error": null,
+    "artistName": "יהודית רביץ",
+    "albumName": "דרך המשי",
+    "year": "1985",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/02/a6/c5/02a6c559-7915-ca9b-61c1-075b0489a1e2/7290116161723.png/600x600bb.jpg",
+      "path": "covers/20260906_101041.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101045.jpg",
+    "error": null,
+    "artistName": "יהודית רביץ",
+    "albumName": "יהודית רביץ",
+    "year": "1979",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/8b/1f/cd/8b1fcd59-0fec-e996-d457-74a86560cf54/7290116161839.png/600x600bb.jpg",
+      "path": "covers/20260906_101045.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101050.jpg",
+    "error": null,
+    "artistName": "אסתר עופרים",
+    "albumName": "אסתר עופרים",
+    "year": "1972",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101054.jpg",
+    "error": null,
+    "artistName": "אריאל זילבר",
+    "albumName": "רוצי שמוליק",
+    "year": "1976",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_102629.jpg",
+    "error": null,
+    "artistName": "מתי כספי",
+    "albumName": "ילדותי השנייה",
+    "year": "1985",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103805.jpg",
+    "error": null,
+    "artistName": "אריק סיני",
+    "albumName": "צל כבד",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/21/89/96/21899644-af4f-8ccf-5292-612e5729bae9/asset.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103805.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103809.jpg",
+    "error": null,
+    "artistName": "אריק איינשטיין ומיקי גבריאלוב",
+    "albumName": "סע לאט",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103812.jpg",
+    "error": null,
+    "artistName": "יגאל בשן, עוזי חיטמן ויונתן מילר",
+    "albumName": "אנחנו נשארים בארץ",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103815.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "בתוכנית יחיד",
+    "year": "1971",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Features/v4/1e/9b/37/1e9b370d-436c-d146-e87b-5a124586d564/V4HttpAssetRepositoryClient-ticket.chtarwkm.jpg-6285603384756031414.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103815.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103817.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "הלילה הוא שירים",
+    "year": "1978",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f6/2f/b3/f62fb3e7-82a2-8d14-ec34-512fa90d189d/7290116164359.png/600x600bb.jpg",
+      "path": "covers/20260906_103817.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103821.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "התבהרות",
+    "year": "1978",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music/74/94/eb/mzi.opyjiwkg.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103821.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103824.jpg",
+    "error": null,
+    "artistName": "חוה אלברשטיין",
+    "albumName": "לו יהי",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ff/8e/41/ff8e4185-2eca-e205-22b1-35edbca2f5a8/7290116164458.png/600x600bb.jpg",
+      "path": "covers/20260906_103824.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103827.jpg",
+    "error": null,
+    "artistName": "יהודית רביץ",
+    "albumName": "בוא לריו",
+    "year": "1987",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3c/ab/e4/3cabe4c0-4679-f9d7-5d62-03bebc8d1e90/7290116161754.png/600x600bb.jpg",
+      "path": "covers/20260906_103827.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103830.jpg",
+    "error": null,
+    "artistName": "יהודה פוליקר",
+    "albumName": "עיניים שלי",
+    "year": "1985",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/60/a9/5a/60a95a8c-7811-8691-9dad-f74f84354de2/7290116161457.png/600x600bb.jpg",
+      "path": "covers/20260906_103830.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103832.jpg",
+    "error": null,
+    "artistName": "אריק איינשטיין",
+    "albumName": "ארץ ישראל הישנה והטובה",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103834.jpg",
+    "error": null,
+    "artistName": "כוורת",
+    "albumName": "סיפורי פוגי",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/b2/de/be/b2debe26-06a4-885f-0afe-2887c0126fe2/7290107177603.png/600x600bb.jpg",
+      "path": "covers/20260906_103834.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103837.jpg",
+    "error": null,
+    "artistName": "יהודית רביץ",
+    "albumName": "באה מאהבה",
+    "year": "1987",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/26/d2/eb/26d2ebb1-b89f-40d4-508a-9fe18878ee5a/7290116161822.png/600x600bb.jpg",
+      "path": "covers/20260906_103837.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103848.jpg",
+    "error": null,
+    "artistName": "קורין אלאל",
+    "albumName": "אנטארקטיקה",
+    "year": "1992",
+    "numRecords": "1",
+    "confidence": "high",
+    "corrected": true,
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/a7/8f/6f/a78f6f77-95b3-9d27-caf0-1de84d77c282/7290116161853.png/600x600bb.jpg",
+      "path": "covers/20260906_103848.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103852.jpg",
+    "error": null,
+    "artistName": "מתי כספי ואמנים שונים",
+    "albumName": "ארץ טרופית יפה",
+    "year": "1978",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103856.jpg",
+    "error": null,
+    "artistName": "מתי כספי וסשה ארגוב",
+    "albumName": "מתתיהו ואלכסנדר",
+    "year": "1984",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103858.jpg",
+    "error": null,
+    "artistName": "מתי כספי",
+    "albumName": "מתי כספי",
+    "year": "1976",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/95/69/72/956972e1-929f-0f06-f8b3-9347a9b99757/7290116162232.png/600x600bb.jpg",
+      "path": "covers/20260906_103858.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103901.jpg",
+    "error": null,
+    "artistName": "נעמי שמר",
+    "albumName": "על הדבש ועל העוקץ",
+    "year": "1981",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ec/82/1e/ec821ef0-2cbd-b8f1-1519-ebcbeb0a7462/7290116161907.png/600x600bb.jpg",
+      "path": "covers/20260906_103901.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103903.jpg",
+    "error": null,
+    "artistName": "שלום חנוך",
+    "albumName": "מכתבים למשיח",
+    "year": "1985",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/2a/8c/51/2a8c5158-6bdd-b59e-9c57-bfc90e7a37a2/7290116161976.png/600x600bb.jpg",
+      "path": "covers/20260906_103903.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095510.jpg",
+    "error": null,
+    "artistName": "Jethro Tull",
+    "albumName": "Stormwatch",
+    "year": "1979",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bd/78/a6/bd78a6b3-a705-d918-eec5-43e99fb52d31/724359339955.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095510.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095038.jpg",
+    "error": null,
+    "artistName": "Pink Floyd",
+    "albumName": "The Dark Side of the Moon",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101615.jpg",
+    "error": null,
+    "artistName": "Emerson, Lake & Palmer",
+    "albumName": "Emerson, Lake & Palmer",
+    "year": "1970",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/95/12/17/9512173a-eaf5-175c-3a7a-ff51ff98fab3/4050538184686.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101615.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101548.jpg",
+    "error": null,
+    "artistName": "Aphrodite's Child",
+    "albumName": "Aphrodite's Child",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "low",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_100519.jpg",
+    "error": null,
+    "artistName": "Elvis Presley",
+    "albumName": "Elvis In Hollywood",
+    "year": "1976",
+    "numRecords": "1",
+    "confidence": "low",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_095749.jpg",
+    "error": null,
+    "artistName": "Simon and Garfunkel",
+    "albumName": "The Concert in Central Park",
+    "year": "1982",
+    "numRecords": "2",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/79/38/47/79384738-6769-ea03-0541-605c10d6edcc/886444877138.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095749.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095503.jpg",
+    "error": null,
+    "artistName": "John Denver",
+    "albumName": "John Denver's Greatest Hits",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/8e/84/65/8e84659d-617e-6816-1680-6c0fbda48d9d/886447563786.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095503.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095448.jpg",
+    "error": null,
+    "artistName": "Jefferson Airplane",
+    "albumName": "Long John Silver",
+    "year": "1972",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bb/ab/7c/bbab7c95-0180-0f7b-8f24-c86702c3e22c/603497852789.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095448.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103045.jpg",
+    "error": null,
+    "artistName": "Barbra Streisand",
+    "albumName": "Guilty",
+    "year": "1980",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/99/9b/7c/999b7cbc-d6a2-264e-f6da-c15f9b28c233/dj.lqpidfzp.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103045.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095101.jpg",
+    "error": null,
+    "artistName": "The Grass Roots",
+    "albumName": "16 Greatest Hits",
+    "year": "1971",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_095049.jpg",
+    "error": null,
+    "artistName": "Harry Chapin",
+    "albumName": "Verities & Balderdash",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/59/23/4e/59234e42-86ac-818a-6e41-1fa1536aa04f/s06.zywtcmse.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095049.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095451.jpg",
+    "error": null,
+    "artistName": "Janis Joplin",
+    "albumName": "Greatest Hits",
+    "year": "1973",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6e/5c/8e/6e5c8e88-9a43-991c-6795-dc249941b1b6/886447856208.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095451.jpg"
+    }
+  },
+  {
+    "filename": "20260906_100513.jpg",
+    "error": null,
+    "artistName": "Elvis Presley",
+    "albumName": "Love Songs",
+    "year": "1979",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_095512.jpg",
+    "error": null,
+    "artistName": "James Galway",
+    "albumName": "Showpieces",
+    "year": "1978",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_101554.jpg",
+    "error": null,
+    "artistName": "Yes",
+    "albumName": "Going For The One",
+    "year": "1977",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/72/94/5d/72945df4-6fe6-298e-a6b5-d08fd9ffc581/603497886142.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101554.jpg"
+    }
+  },
+  {
+    "filename": "20260906_102047.jpg",
+    "error": null,
+    "artistName": "Emerson, Lake & Palmer",
+    "albumName": "Tarkus",
+    "year": "1971",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/3f/e0/fc/3fe0fc5e-a5cd-da34-b830-e27b74dc67ea/4050538185010.jpg/600x600bb.jpg",
+      "path": "covers/20260906_102047.jpg"
+    }
+  },
+  {
+    "filename": "20260906_094957.jpg",
+    "error": null,
+    "artistName": "Enrico Macias",
+    "albumName": "Olympia 68",
+    "year": "1968",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ef/12/be/ef12be27-2154-d835-3235-2e22ac96e378/23UMGIM47338.rgb.jpg/600x600bb.jpg",
+      "path": "covers/20260906_094957.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101618.jpg",
+    "error": null,
+    "artistName": "Electric Light Orchestra",
+    "albumName": "Eldorado",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/33/71/c5/3371c536-58ee-b425-9786-4a78952725aa/074643552622.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101618.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095458.jpg",
+    "error": null,
+    "artistName": "The Sandpipers",
+    "albumName": "Michelle",
+    "year": "1967",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_102143.jpg",
+    "error": null,
+    "artistName": "The Moody Blues",
+    "albumName": "Days of Future Passed",
+    "year": "1967",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/3b/69/1a/3b691ad6-7072-28a9-8eaa-16b38e238862/00602527917993.rgb.jpg/600x600bb.jpg",
+      "path": "covers/20260906_102143.jpg"
+    }
+  },
+  {
+    "filename": "20260906_102116.jpg",
+    "error": null,
+    "artistName": "Genesis",
+    "albumName": "Nursery Cryme",
+    "year": "1971",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music/de/e9/6d/mzi.xtxlzxtt.jpg/600x600bb.jpg",
+      "path": "covers/20260906_102116.jpg"
+    }
+  },
+  {
+    "filename": "20260906_102136.jpg",
+    "error": null,
+    "artistName": "Lou Reed",
+    "albumName": "New Sensations",
+    "year": "1984",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music/b6/fa/51/mzi.amivyhfr.jpg/600x600bb.jpg",
+      "path": "covers/20260906_102136.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101613.jpg",
+    "error": null,
+    "artistName": "Dire Straits",
+    "albumName": "Brothers In Arms",
+    "year": "1985",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e8/bd/54/e8bd54fd-6595-4ebf-aa4c-58139ed316e6/dj.bngafruf.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101613.jpg"
+    }
+  },
+  {
+    "filename": "20260906_100507.jpg",
+    "error": null,
+    "artistName": "Elvis Presley",
+    "albumName": "Worldwide 50 Gold Award Hits Vol. 1",
+    "year": "1971",
+    "numRecords": "4",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103512.jpg",
+    "error": null,
+    "artistName": "The Doors",
+    "albumName": "The Soft Parade",
+    "year": "1969",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/2c/e9/ed/2ce9edd5-cd5a-ff4c-a4bb-791fdfa55656/603497838714.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103512.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103457.jpg",
+    "error": null,
+    "artistName": "Deep Purple",
+    "albumName": "Burn",
+    "year": "1974",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/09/71/60/09716042-e912-1fb8-de4f-1d2de8bf5c57/603497877751.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103457.jpg"
+    }
+  },
+  {
+    "filename": "20260906_101630.jpg",
+    "error": null,
+    "artistName": "Pink Floyd",
+    "albumName": "Wish You Were Here",
+    "year": "1975",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/aa/e0/ab/aae0ab6a-d906-a189-81bf-70b56aa43f7a/886445635843.jpg/600x600bb.jpg",
+      "path": "covers/20260906_101630.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103454.jpg",
+    "error": null,
+    "artistName": "David Gilmour",
+    "albumName": "About Face",
+    "year": "1984",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ab/ef/cd/abefcd72-8dfb-cdee-5e99-a6cfebe85e89/888880071040.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103454.jpg"
+    }
+  },
+  {
+    "filename": "20260906_102605.jpg",
+    "error": null,
+    "artistName": "Renaissance",
+    "albumName": "Renaissance",
+    "year": "1969",
+    "numRecords": "1",
+    "confidence": "high",
+    "source": "user-edited",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_094934.jpg",
+    "error": null,
+    "artistName": "Genesis",
+    "albumName": "Seconds Out",
+    "year": "1977",
+    "numRecords": "2",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music/f2/03/85/mzi.ymrvkskj.jpg/600x600bb.jpg",
+      "path": "covers/20260906_094934.jpg"
+    }
+  },
+  {
+    "filename": "20260906_102548.jpg",
+    "error": null,
+    "artistName": "Genesis",
+    "albumName": "Duke",
+    "year": "1980",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/c7/03/19/c703193e-4e6a-8208-3665-b92f8ead9c4e/mzi.jrrodvik.jpg/600x600bb.jpg",
+      "path": "covers/20260906_102548.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103056.jpg",
+    "error": null,
+    "artistName": "The Beatles",
+    "albumName": "Sgt. Pepper's Lonely Hearts Club Band",
+    "year": "1967",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/6f/79/8d/6f798d84-7475-8525-fc91-f7b51b2b5a9b/00602567725428.rgb.jpg/600x600bb.jpg",
+      "path": "covers/20260906_103056.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095437.jpg",
+    "error": null,
+    "artistName": "Mamas And Papas",
+    "albumName": "20 Golden Hits",
+    "year": "1970",
+    "numRecords": "2",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_103118.jpg",
+    "error": null,
+    "artistName": "Bob Dylan",
+    "albumName": "Desire",
+    "year": "1976",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_100510.jpg",
+    "error": null,
+    "artistName": "Elton John",
+    "albumName": "Elton John",
+    "year": "1970",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a9/52/e6/a952e6c5-a5e1-a56d-a6f4-b01ca42a4368/06UMGIM50695.rgb.jpg/600x600bb.jpg",
+      "path": "covers/20260906_100510.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095822.jpg",
+    "error": null,
+    "artistName": "Paul Simon",
+    "albumName": "Still Crazy After All These Years",
+    "year": "1975",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/bc/19/3f/bc193fef-9467-956f-9fe0-2b4be6770ed3/dj.dljuqezh.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095822.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103059.jpg",
+    "error": null,
+    "artistName": "The Beatles",
+    "albumName": "Yesterday And Today",
+    "year": "1966",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  },
+  {
+    "filename": "20260906_095434.jpg",
+    "error": null,
+    "artistName": "Joe Dassin",
+    "albumName": "Ça Va Pas Changer Le Monde",
+    "year": "1975",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/10/74/8e/10748e15-79cd-91e9-b4c0-bba09b44c800/mzi.dtltqnyj.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095434.jpg"
+    }
+  },
+  {
+    "filename": "20260906_095506.jpg",
+    "error": null,
+    "artistName": "Joan Baez",
+    "albumName": "For Every Stage",
+    "year": "1975",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "itunes",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/d4/6f/6d/d46f6dfe-63d9-7c06-53b5-e4e6ae2678d4/00602567847823.rgb.jpg/600x600bb.jpg",
+      "path": "covers/20260906_095506.jpg"
+    }
+  },
+  {
+    "filename": "20260906_103050.jpg",
+    "error": null,
+    "artistName": "The Beach Boys",
+    "albumName": "Best of The Beach Boys",
+    "year": "1966",
+    "numRecords": "1",
+    "confidence": "high",
+    "coverChoice": {
+      "source": "photo"
+    }
+  }
+]

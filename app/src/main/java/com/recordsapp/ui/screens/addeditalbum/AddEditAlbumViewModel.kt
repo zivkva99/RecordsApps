@@ -9,7 +9,9 @@ import com.recordsapp.data.local.QaExporter
 import com.recordsapp.data.local.entity.AlbumEntity
 import com.recordsapp.data.local.entity.CopyEntity
 import com.recordsapp.data.remote.CoverArtMatchService
+import com.recordsapp.data.remote.DiscogsCoverArtService
 import com.recordsapp.data.remote.ItunesCoverArtService
+import com.recordsapp.data.remote.unionCandidates
 import com.recordsapp.data.remote.RecognitionApiException
 import com.recordsapp.data.remote.RecognitionService
 import com.recordsapp.data.repository.AlbumRepository
@@ -25,6 +27,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -32,7 +36,7 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 /** Candidates beyond this are dropped before the AI comparison call to keep its payload small. */
-private const val MAX_COVER_CANDIDATES = 10
+private const val MAX_COVER_CANDIDATES = 14
 
 sealed class RecognitionState {
     object Idle : RecognitionState()
@@ -78,6 +82,7 @@ class AddEditAlbumViewModel @Inject constructor(
     private val imageStorage: ImageStorage,
     private val recognitionService: RecognitionService,
     private val coverArtService: ItunesCoverArtService,
+    private val discogsCoverArtService: DiscogsCoverArtService,
     private val coverArtMatchService: CoverArtMatchService,
     private val qaExporter: QaExporter
 ) : ViewModel() {
@@ -222,8 +227,12 @@ class AddEditAlbumViewModel @Inject constructor(
                 val result = recognitionService.recognize(uri)
                 _state.update { it.copy(recognitionState = RecognitionState.Result(result)) }
                 if (result.artistName.isNotBlank() && result.albumName.isNotBlank()) {
-                    val urls = coverArtService.fetchUrls(result.artistName, result.albumName)
-                        .take(MAX_COVER_CANDIDATES)
+                    // iTunes and Discogs in parallel -- Discogs fills gaps iTunes's
+                    // catalog misses (confirmed for regional/Hebrew pressings), iTunes
+                    // stays first in the union since it's the cheaper, faster source.
+                    val itunesUrls = async { coverArtService.fetchUrls(result.artistName, result.albumName) }
+                    val discogsUrls = async { discogsCoverArtService.fetchUrls(result.artistName, result.albumName) }
+                    val urls = unionCandidates(itunesUrls.await(), discogsUrls.await(), MAX_COVER_CANDIDATES)
                     if (urls.isEmpty()) return@launch
                     _state.update { current ->
                         val rs = current.recognitionState

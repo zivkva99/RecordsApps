@@ -86,7 +86,10 @@ class CoverArtMatchService @Inject constructor(
     private fun identityFallback(count: Int) = CoverMatchResult(List(count) { it }, bestIsGoodMatch = count > 0)
 
     private fun downloadImage(url: String): ByteArray? = try {
-        val request = Request.Builder().url(url).build()
+        // Discogs's image CDN (i.discogs.com) returns 403 for OkHttp's
+        // default User-Agent -- confirmed by testing directly. Candidates
+        // from DiscogsCoverArtService need this to download at all.
+        val request = Request.Builder().url(url).header("User-Agent", "RecordsApp/1.0").build()
         downloadClient.newCall(request).execute().use { resp ->
             if (!resp.isSuccessful) null else resp.body?.bytes()?.let {
                 ImageCompression.fromBytes(it, CANDIDATE_MAX_DIM, quality = 80)
@@ -128,7 +131,7 @@ Identify which candidates show the same front-cover artwork as the photo: the sa
 
 Do NOT count as a match: a different photograph or illustration, a different color scheme, a different album entirely (including a tribute/cover-version album by another artist, or a different volume/edition with different content), or a generic "same artist" image that isn't the specific cover shown.
 
-Minor things that do NOT disqualify a match: the photo's lighting/glare/wear, a price sticker or barcode, or a small "remastered"/anniversary badge added on top of the same artwork.
+Minor things that do NOT disqualify a match: the photo being blurry, out of focus, taken at an angle, or poorly lit; glare or wear on the physical sleeve; a price sticker or barcode; or a small "remastered"/anniversary badge added on top of the same artwork. Judge the underlying artwork the photo is showing, not the photo's own image quality.
 
 Return ONLY a JSON object:
 {

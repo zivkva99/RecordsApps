@@ -105,3 +105,73 @@ No pacing/retry infrastructure was ported to the Kotlin side — the rate
 limiting only showed up under this tool's rapid bulk testing from one IP;
 a real user recognizing one record at a time isn't at meaningful risk of
 hitting it.
+
+## Round 2: adding Discogs as a second source (2026-09-07)
+
+The round above still left Hebrew well behind English (41% vs 56% on the
+full corpus) and 6 of 41 Hebrew records with zero candidates at all —
+iTunes's catalog just doesn't carry many Israeli pressings. Added
+[Discogs](https://www.discogs.com) (a vinyl-collector marketplace
+database) as a second candidate source, iterated on it with statistics
+after each round on an 81-record dev set (all 41 Hebrew + a random 40 of
+the 140 English records, for faster iteration than a full 181-record run):
+
+| Iteration | Change | Hebrew | English |
+|---|---|---|---|
+| 0 (baseline, full corpus) | shipped Round-1 version | 17/41 (41%) | 79/140 (56%) |
+| 1 (dev set) | + Discogs as a second source | 22/41 (54%) | 23/40 (58%) |
+| 2 (dev set) | + fixed a Discogs image-download bug (below) + blur/angle/lighting-tolerant prompt | 33/41 (80%) | 36/40 (90%) |
+| 2, re-run (dev set) | same version, independent re-run to check stability | 36/41 (88%) | 36/40 (90%) |
+| 3 (dev set) | + color-cast tolerance in the prompt | 31/41 (76%) | 38/40 (95%) — **reverted** |
+| **Final (full 181-record corpus)** | **iteration 2's version** | **30/41 (73%)** | **109/140 (78%)** |
+
+Two bugs found and fixed along the way (both confirmed by testing directly
+against the real APIs, not assumed):
+
+1. **Discogs's search endpoint doesn't return image URLs without
+   authentication** (`thumb`/`cover_image` come back `""`) — but its
+   per-release *detail* endpoint (`/releases/{id}`) does, unauthenticated.
+   So: search for release IDs (free), fetch detail for a few of them
+   (also free) to get the actual image.
+2. **Discogs's combined "artist album" search query silently returns zero
+   results for some Hebrew records** — Hebrew grammar glues conjunctions
+   directly onto the next word with no space (e.g. "X ומיקי Y" = "X and
+   Miki Y" as one token), which doesn't tokenize-match against Discogs's
+   index the way a plain artist name does. An album-title-only query still
+   finds the record. Fixed by unioning both queries.
+3. **(The big one.)** `download_image()` never sent a User-Agent header,
+   and Discogs's image CDN (`i.discogs.com`) returns HTTP 403 for the
+   default `python-requests` User-Agent — confirmed directly with `curl`.
+   This meant *every Discogs candidate image silently failed to download
+   during the actual Gemini comparison step* in iteration 1: the search
+   was finding the right release (confirmed manually, e.g. for "אריק
+   איינשטיין ומיקי גבריאלוב - סע לאט"), but Gemini never actually saw that
+   image. Fixing this (iteration 2) was the single largest jump in the
+   whole investigation — Hebrew alone went from 54% to 80-88%.
+
+Iteration 3 (a further prompt tweak for photos with a different color
+cast than a clean scan) traded a Hebrew regression for an English gain on
+the small dev sample, with the numbers close enough to plausibly be
+sample noise either way. Followed this session's established rule for an
+unconfirmed change stacked on a validated one: reverted rather than risk
+it, since Hebrew was the whole point of this round.
+
+**Result: Hebrew 41% → 73% (~1.8x), English 56% → 78% (~1.4x), on the full
+181-record corpus.** 1 zero-candidate record remained (down from 10 at the
+very start of this work) and 1 transient Gemini API 503 during the run
+(unrelated to the matching logic itself).
+
+### What shipped
+
+- New file `app/src/main/java/com/recordsapp/data/remote/DiscogsCoverArtService.kt`
+  — mirrors `tools/cover_match.py`'s `discogs_search`; pure helpers
+  (`dedupeByMaster`, `pickPrimaryImageUrl`) unit-tested in
+  `DiscogsCoverArtServiceTest.kt`.
+- `AddEditAlbumViewModel.kt` — fetches iTunes and Discogs candidates in
+  parallel (`async`/`awaitAll`) and unions them via the existing
+  `unionCandidates` helper; `MAX_COVER_CANDIDATES` raised 10 → 14.
+- `CoverArtMatchService.kt` — `PROMPT` updated with the validated
+  blur/angle/lighting-tolerance wording (not the reverted color-cast
+  addition); `downloadImage()` now sends a `User-Agent` header so Discogs
+  candidates actually download during the real app's comparison step too
+  (the exact bug above, ported as a fix rather than reproduced).

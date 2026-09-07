@@ -38,14 +38,20 @@ with open(os.path.join(REPO, "local.properties"), "r", encoding="utf-8") as f:
     API_KEY = next(l.split("=", 1)[1].strip() for l in f if l.strip().startswith("gemini_api_key"))
 
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
-MAX_CANDIDATES = 10      # matches Android's MAX_COVER_CANDIDATES
+MAX_CANDIDATES = 14      # matches Android's MAX_COVER_CANDIDATES
 TEXT_SEARCH_CANDIDATES = 6   # from the plain iTunes text search
 CATALOG_MATCH_CANDIDATES = 6  # from the artist-catalog fuzzy match
 CATALOG_MATCH_CUTOFF = 0.4
+DISCOGS_DETAIL_LIMIT = 4     # release detail fetches per record (Discogs)
 EMBED_CANDIDATES = 4     # how many ranked candidates we keep thumbnails for in the HTML
 PHOTO_MAX_DIM = 1024
 CAND_MAX_DIM = 500
 THUMB_DIM = 220
+HEBREW_RE = re.compile(r"[֐-׿]")
+
+
+def is_hebrew_record(rec):
+    return bool(HEBREW_RE.search(rec.get("artistName", "")) or HEBREW_RE.search(rec.get("albumName", "")))
 
 # Exact prompt copied from CoverArtMatchService.kt PROMPT constant
 PROMPT = """You are comparing a photo of a physical vinyl record cover (the first image) against numbered candidate album-art images found online (the images that follow, each preceded by its "Candidate N:" label).
@@ -54,7 +60,7 @@ Identify which candidates show the same front-cover artwork as the photo: the sa
 
 Do NOT count as a match: a different photograph or illustration, a different color scheme, a different album entirely (including a tribute/cover-version album by another artist, or a different volume/edition with different content), or a generic "same artist" image that isn't the specific cover shown.
 
-Minor things that do NOT disqualify a match: the photo's lighting/glare/wear, a price sticker or barcode, or a small "remastered"/anniversary badge added on top of the same artwork.
+Minor things that do NOT disqualify a match: the photo being blurry, out of focus, taken at an angle, or poorly lit; glare or wear on the physical sleeve; a price sticker or barcode; or a small "remastered"/anniversary badge added on top of the same artwork. Judge the underlying artwork the photo is showing, not the photo's own image quality.
 
 Return ONLY a JSON object:
 {
@@ -63,7 +69,13 @@ Return ONLY a JSON object:
 }
 "bestIsGoodMatch" should be true whenever the top-ranked candidate's front-cover artwork clearly matches the photo by the rule above. Only mark it false if none of the candidates are a confident match."""
 
+# Discogs's image CDN (i.discogs.com) returns 403 for the default
+# python-requests User-Agent -- confirmed by testing directly. Setting this
+# on the shared session covers every request through it, including plain
+# image downloads, not just the Discogs API calls that already sent it
+# explicitly.
 session = requests.Session()
+session.headers.update({"User-Agent": "RecordsAppCoverMatchQA/1.0"})
 _save_lock = Lock()
 
 # iTunes's search API has a fairly aggressive undocumented per-IP rate limit
@@ -183,7 +195,7 @@ def itunes_catalog_search(artist, album, limit=CATALOG_MATCH_CANDIDATES):
 
 
 def itunes_search(artist, album):
-    """Union of both search strategies, deduped, capped to MAX_CANDIDATES."""
+    """Union of both iTunes search strategies, deduped."""
     text_urls = itunes_text_search(artist, album)
     catalog_urls = itunes_catalog_search(artist, album)
     seen = set()
@@ -191,6 +203,109 @@ def itunes_search(artist, album):
     # Interleave so a strong catalog match isn't starved by 6 text results
     # filling the cap first.
     for u in catalog_urls + text_urls:
+        if u not in seen:
+            seen.add(u)
+            combined.append(u)
+    return combined
+
+
+# Discogs -- unauthenticated requests work but the *search* endpoint omits
+# image URLs entirely (thumb/cover_image come back "") unless the request
+# is authenticated; the per-release *detail* endpoint (/releases/{id})
+# returns full images without auth. So: search for release IDs, then fetch
+# detail for a few of them. Discogs's own (undocumented, observed) rate
+# limit for unauthenticated requests is roughly 25/min -- paced the same
+# way as the iTunes calls, after that class of bug already cost one whole
+# run this session.
+_discogs_lock = Lock()
+_discogs_last_call = [0.0]
+DISCOGS_MIN_INTERVAL = 2.6
+
+
+def _discogs_get(url, timeout=10, max_retries=5):
+    resp = None
+    for attempt in range(max_retries):
+        with _discogs_lock:
+            wait = _discogs_last_call[0] + DISCOGS_MIN_INTERVAL - time.time()
+            if wait > 0:
+                time.sleep(wait)
+            _discogs_last_call[0] = time.time()
+        try:
+            resp = session.get(url, headers={"User-Agent": "RecordsAppCoverMatchQA/1.0"}, timeout=timeout)
+        except Exception:
+            resp = None
+        if resp is not None and resp.status_code == 200:
+            return resp
+        if resp is not None and resp.status_code in (403, 429):
+            time.sleep(15 * (attempt + 1))
+            continue
+        return resp
+    return resp
+
+
+def _discogs_release_search(query):
+    try:
+        q = quote(query)
+        resp = _discogs_get(f"https://api.discogs.com/database/search?q={q}&type=release")
+        if resp is None or resp.status_code != 200:
+            return []
+        return resp.json().get("results", [])
+    except Exception:
+        return []
+
+
+def discogs_search(artist, album, detail_limit=DISCOGS_DETAIL_LIMIT):
+    """Searches Discogs for matching releases, dedupes by master (same
+    master release group -> essentially the same artwork, no point paying
+    for a detail fetch on both), then fetches full images for the top few.
+    Discogs is a vinyl-collector marketplace with far deeper coverage of
+    regional/obscure pressings than iTunes -- e.g. it has Israeli Hebrew
+    releases iTunes's catalog doesn't carry at all.
+
+    Runs two release searches, combined "artist album" and album-only, and
+    unions them -- Hebrew glues conjunctions onto the next word with no
+    space ("X ומיקי Y" = "X and Miki Y"), which silently zeroes out the
+    combined query's results against Discogs's tokenized index in a way a
+    plain "artist album" text match doesn't reveal; album-only still finds
+    it. Kept the combined query too since it's the more specific match
+    when it does work (mixed-language or single-artist records)."""
+    try:
+        results = _discogs_release_search(f"{artist} {album}") + _discogs_release_search(album)
+
+        seen_masters = set()
+        release_ids = []
+        for r in results:
+            key = r.get("master_id") or r.get("id")
+            if key in seen_masters:
+                continue
+            seen_masters.add(key)
+            release_ids.append(r["id"])
+            if len(release_ids) >= detail_limit:
+                break
+
+        urls = []
+        for rid in release_ids:
+            dresp = _discogs_get(f"https://api.discogs.com/releases/{rid}")
+            if dresp is None or dresp.status_code != 200:
+                continue
+            images = dresp.json().get("images", [])
+            primary = next((im for im in images if im.get("type") == "primary"), images[0] if images else None)
+            if primary and primary.get("uri"):
+                urls.append(primary["uri"])
+        return urls
+    except Exception:
+        return []
+
+
+def find_candidates(artist, album):
+    """Union of iTunes (text + catalog) and Discogs candidates, deduped,
+    capped to MAX_CANDIDATES. iTunes first -- its images are the cheapest
+    to have already validated; Discogs fills gaps iTunes's catalog misses."""
+    itunes_urls = itunes_search(artist, album)
+    discogs_urls = discogs_search(artist, album)
+    seen = set()
+    combined = []
+    for u in itunes_urls + discogs_urls:
         if u not in seen:
             seen.add(u)
             combined.append(u)
@@ -271,7 +386,7 @@ def process_record(rec):
 
     result = {"filename": filename, "candidateUrls": [], "bestIsGoodMatch": False, "error": None}
     try:
-        urls = itunes_search(artist, album)
+        urls = find_candidates(artist, album)
         if not urls:
             return result
 
@@ -311,13 +426,26 @@ def process_record(rec):
     return result
 
 
-def main():
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else None
-    data = json.load(open(os.path.join(EXAMPLES_DIR, "recognition_results.json"), encoding="utf-8"))
-    if limit:
-        data = data[:limit]
-    print(f"Processing {len(data)} records")
+DEV_SET_PATH = os.path.join(REPO, "tools", "eval_data", "cover_match_dev_set.json")
 
+
+def main():
+    arg = sys.argv[1] if len(sys.argv) > 1 else None
+    tag = sys.argv[2] if len(sys.argv) > 2 else None
+
+    if arg == "--dev":
+        data = json.load(open(DEV_SET_PATH, encoding="utf-8"))
+        out_path = os.path.join(OUTPUT_DIR, f"cover_match_dev_{tag or 'results'}.json")
+    else:
+        data = json.load(open(os.path.join(EXAMPLES_DIR, "recognition_results.json"), encoding="utf-8"))
+        if arg and arg.isdigit():
+            data = data[: int(arg)]
+        elif arg and not tag:
+            tag = arg  # e.g. `python cover_match.py full_v3` -- a tag, not a limit
+        out_path = os.path.join(OUTPUT_DIR, f"cover_match_{tag}.json") if tag else OUT_JSON
+    print(f"Processing {len(data)} records -> {out_path}")
+
+    by_filename = {d["filename"]: d for d in data}
     results = []
     done = 0
     with ThreadPoolExecutor(max_workers=6) as ex:
@@ -329,12 +457,21 @@ def main():
             status = "ERR" if r["error"] else ("GOOD" if r["bestIsGoodMatch"] else "UNSURE")
             print(f"[{done}/{len(data)}] {r['filename']:30s} {status:6s} candidates={len(r['candidateUrls'])} err={r['error']}")
             with _save_lock:
-                with open(OUT_JSON, "w", encoding="utf-8") as f:
+                with open(out_path, "w", encoding="utf-8") as f:
                     json.dump(sorted(results, key=lambda x: x["filename"]), f, ensure_ascii=False, indent=2)
 
     errors = [r for r in results if r["error"]]
     unsure = [r for r in results if not r["bestIsGoodMatch"] and not r["error"]]
     print(f"\nDone. {len(results)} processed, {len(errors)} errors, {len(unsure)} unsure/no-match.")
+
+    for label, want_hebrew in [("Hebrew", True), ("English", False)]:
+        rows = [r for r in results if is_hebrew_record(by_filename[r["filename"]]) == want_hebrew]
+        if not rows:
+            continue
+        good = sum(1 for r in rows if r["bestIsGoodMatch"])
+        zero = sum(1 for r in rows if len(r["candidateUrls"]) == 0)
+        print(f"  {label}: {good}/{len(rows)} good ({100 * good / len(rows):.0f}%), {zero} zero-candidate")
+    print(f"\nWritten to {out_path}")
 
 
 if __name__ == "__main__":
